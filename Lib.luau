@@ -216,7 +216,7 @@ if getcustomasset then
 
 	pcall(function()
 		if not isfile(dir..'/'..'logooo.png') then
-			local byte = game:HttpGet(string.format(link,'komaru.png'));
+			local byte = game:HttpGet(string.format(link,'logooo.png'));
 
 			writefile(dir..'/'..'logooo.png' , byte);
 			task.wait();
