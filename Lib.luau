@@ -215,15 +215,15 @@ if getcustomasset then
 	end;
 
 	pcall(function()
-		if not isfile(dir..'/'..'logo.png') then
-			local byte = game:HttpGet(string.format(link,'logo.png'));
+		if not isfile(dir..'/'..'komaru.png') then
+			local byte = game:HttpGet(string.format(link,'komaru.png'));
 
-			writefile(dir..'/'..'logo.png' , byte);
+			writefile(dir..'/'..'komaru.png' , byte);
 			task.wait();
 		end;
 
-		if isfile(dir..'/'..'logo.png') then
-			Komaru.GlobalLogo = getcustomasset(dir..'/'..'logo.png')
+		if isfile(dir..'/'..'komaru.png') then
+			Komaru.GlobalLogo = getcustomasset(dir..'/'..'komaru.png')
 		end;
 	end);
 
@@ -3842,7 +3842,7 @@ function Komaru:CreateWindow(Config)
 		Size = UDim2.new(0, 640, 0, 480),
 		ConfigFolder = "NeverLoseConfigs",
 		Enable3DRenderer = false,
-		Keybind = "Insert"
+		Keybind = "F1"
 	});
 
 	local Window = {
