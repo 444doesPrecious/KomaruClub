@@ -1,5 +1,5 @@
 --[[
-                          Komaru.cc UI Library
+    Neverlose.cc UI Library
     Author: 4lpaca
 	License: MIT
     Discord: https://arceney.win/discord
@@ -3421,7 +3421,7 @@ function Komaru:RegisiterItem(Frame: Frame , Signel)
 
 		BasedFrame.Name = Komaru.RandomString();
 		BasedFrame.Parent = Frame
-		BasedFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 33)
+		BasedFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 		BasedFrame.BackgroundTransparency = 1.000
 		BasedFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		BasedFrame.BorderSizePixel = 0
@@ -5854,28 +5854,33 @@ function Komaru:CreateWindow(Config)
 
 	local function closeAllSubmenus()
 		if ConfigLib and ConfigLib.Signal then
-			ConfigLib.Signal:SetValue(false);
+			ConfigLib.Signal:SetValue(false)
 		end
 		if UserSettings and UserSettings.Signal then
-			UserSettings.Signal:SetValue(false);
+			UserSettings.Signal:SetValue(false)
 		end
 		for _, item in ipairs(Komaru.OpenableRegistry or {}) do
 			if item.OpenSignal then
-				item.OpenSignal:SetValue(false);
+				item.OpenSignal:SetValue(false)
 			elseif item.SetRender then
-				item.SetRender(false);
+				item.SetRender(false)
+			elseif item.Signal then
+				item.Signal:SetValue(false)
 			end
 		end
 		for _, tooltip in ipairs(Komaru.TooltipRegistry or {}) do
-			tooltip.SetRender(false);
+			tooltip.SetRender(false)
 		end
 	end
 
 	Komaru:AddSignal(Window.Signal:Connect(LPH_NO_VIRTUALIZE(function(value)
 		if not value then
-			closeAllSubmenus();
+			closeAllSubmenus()
 		end
 	end)));
+
+	table.insert(Komaru.OpenableRegistry, ConfigLib)
+	table.insert(Komaru.OpenableRegistry, UserSettings)
 
 	local UserSettings = Komaru:CreateOptionWindow(BottomFrame , BottomFrame.ZIndex + 13);
 	local reciveSignal;
