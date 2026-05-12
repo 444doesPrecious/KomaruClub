@@ -202,6 +202,8 @@ Komaru.AccentColor = Color3.fromRGB(252, 78, 78);
 Komaru.MainColor = Color3.fromRGB(8, 8, 8);
 Komaru.RegisiteryColor = {};
 Komaru.NameRegisitry = {};
+Komaru.TooltipRegistry = {};
+Komaru.OpenableRegistry = {};
 Komaru.IsMosueOverOtherFrame = false;
 Komaru.GlobalLogo = "rbxassetid://125898441467342";
 Komaru.ImageColorMapping = "rbxassetid://4155801252";
@@ -1740,7 +1742,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		Toggle.Name = Komaru.RandomString();
 		Toggle.Parent = Handler
-		Toggle.BackgroundColor3 = Color3.fromRGB(10, 10, 21)
+		Toggle.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 		Toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Toggle.BorderSizePixel = 0
 		Toggle.ClipsDescendants = true
@@ -1784,7 +1786,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			else
 				Komaru.PlayAnimate(Toggle,SlowyTween,{
 					BackgroundTransparency = 0,
-					BackgroundColor3 = Color3.fromRGB(10, 10, 21)
+					BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 				})
 
 				Komaru.PlayAnimate(Circle,SlowyTween,{
@@ -1801,7 +1803,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			else
 				Komaru.PlayAnimate(Toggle,SlowyTween,{
 					BackgroundTransparency = 1,
-					BackgroundColor3 = Color3.fromRGB(10, 10, 21)
+					BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 				})
 
 				Komaru.PlayAnimate(Circle,SlowyTween,{
@@ -2233,6 +2235,8 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			end;
 		end)));
 
+		table.insert(Komaru.OpenableRegistry, Window);
+
 		local bthg = Komaru:CreateInput(Option , LPH_NO_VIRTUALIZE(function()
 			if reciveSignal then
 				reciveSignal:Disconnect();
@@ -2401,6 +2405,8 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		if Config.Flag then
 			Komaru.Flags[Config.Flag] = ColorPickerLib;
 		end;
+
+		table.insert(Komaru.OpenableRegistry, ColorPickerLib);
 
 		return ColorPickerLib;
 	end;
@@ -3160,6 +3166,8 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			Komaru.Flags[Config.Flag] = DropdownLib;
 		end;
 
+		table.insert(Komaru.OpenableRegistry, DropdownLib);
+
 		return DropdownLib;
 	end;
 
@@ -3373,6 +3381,8 @@ function Komaru:CreateToolTips(Container: Frame , Name: string , Content: string
 
 	ToolTip.SetRender(false);
 	ToolTip.Update();
+
+	table.insert(Komaru.TooltipRegistry, ToolTip);
 
 	local DelayThread;
 	Komaru:AddSignal(Container.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
@@ -3714,7 +3724,7 @@ function Komaru:RegisiterItem(Frame: Frame , Signel)
 
 		UserFrame.Name = Komaru.RandomString();
 		UserFrame.Parent = Frame
-		UserFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 33)
+		UserFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 		UserFrame.BackgroundTransparency = 1.000
 		UserFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		UserFrame.BorderSizePixel = 0
@@ -4396,7 +4406,7 @@ function Komaru:CreateWindow(Config)
 	ConfigFrame.Name = Komaru.RandomString();
 	ConfigFrame.Parent = RightHeader
 	ConfigFrame.AnchorPoint = Vector2.new(0, 0.5)
-	ConfigFrame.BackgroundColor3 = Color3.fromRGB(13, 13, 22)
+	ConfigFrame.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
 	ConfigFrame.BackgroundTransparency = 0.750
 	ConfigFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	ConfigFrame.BorderSizePixel = 0
@@ -4744,7 +4754,7 @@ function Komaru:CreateWindow(Config)
 
 		TabButton.Name = Komaru.RandomString();
 		TabButton.Parent = LeftScrollingFrame
-		TabButton.BackgroundColor3 = Color3.fromRGB(41, 45, 45)
+		TabButton.BackgroundColor3 = Color3.fromRGB(41, 41, 41)
 		TabButton.BackgroundTransparency = 0.500
 		TabButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		TabButton.BorderSizePixel = 0
@@ -5230,7 +5240,7 @@ function Komaru:CreateWindow(Config)
 
 		InputFrame.Name = Komaru.RandomString();
 		InputFrame.Parent = ConfigMenu
-		InputFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 33)
+		InputFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 		InputFrame.BackgroundTransparency = 1.000
 		InputFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		InputFrame.BorderSizePixel = 0
@@ -5491,7 +5501,7 @@ function Komaru:CreateWindow(Config)
 
 				ConfigItemFrame.Name = Komaru.RandomString();
 				ConfigItemFrame.Parent = ConfigMenu
-				ConfigItemFrame.BackgroundColor3 = Color3.fromRGB(21, 21, 27)
+				ConfigItemFrame.BackgroundColor3 = Color3.fromRGB(21, 21, 21)
 				ConfigItemFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 				ConfigItemFrame.BorderSizePixel = 0
 				ConfigItemFrame.Size = UDim2.new(1, -10, 0, 30)
@@ -5842,16 +5852,30 @@ function Komaru:CreateWindow(Config)
 
 	Window:_InitConfig();
 
+	local function closeAllSubmenus()
+		if ConfigLib and ConfigLib.Signal then
+			ConfigLib.Signal:SetValue(false);
+		end
+		if UserSettings and UserSettings.Signal then
+			UserSettings.Signal:SetValue(false);
+		end
+		for _, item in ipairs(Komaru.OpenableRegistry or {}) do
+			if item.OpenSignal then
+				item.OpenSignal:SetValue(false);
+			elseif item.SetRender then
+				item.SetRender(false);
+			end
+		end
+		for _, tooltip in ipairs(Komaru.TooltipRegistry or {}) do
+			tooltip.SetRender(false);
+		end
+	end
+
 	Komaru:AddSignal(Window.Signal:Connect(LPH_NO_VIRTUALIZE(function(value)
 		if not value then
-			if ConfigLib and ConfigLib.Signal then
-				ConfigLib.Signal:SetValue(false);
-			end
-			if UserSettings and UserSettings.Signal then
-				UserSettings.Signal:SetValue(false);
-			end
+			closeAllSubmenus();
 		end;
-	end)));
+	end))));
 
 	local UserSettings = Komaru:CreateOptionWindow(BottomFrame , BottomFrame.ZIndex + 13);
 	local reciveSignal;
