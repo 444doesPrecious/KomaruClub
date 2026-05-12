@@ -1,151 +1,144 @@
--- GUI Library
--- v1.0.0
+--[[
+                          Komaru.cc UI Library
+    Author: 4lpaca
+	License: MIT
+    Discord: https://arceney.win/discord
+    Other-Projects: https://4lpaca.win
+]]
 
-if _G.LOADED_UI then return end
-_G.LOADED_UI = true
+do
+	local Constant = 'L'..'P'..'H'..'_NO_VIRTUALIZE';
+	getfenv()[Constant] = getfenv()[Constant] or function(f) return f end;
+end;
 
-local oldgame = game
-local game = workspace.Parent
+cloneref = cloneref or function(i) return i end;
+gethui = gethui or get_hidden_gui;
+getcustomasset = getcustomasset or getsynasset;
+getgenv = getgenv or getfenv;
 
-local _registry_table = nil
-local _marker = Instance.new("Folder")
+local LOAD_ENV = LPH_NO_VIRTUALIZE(function()
+	if game:GetService('RunService'):IsStudio() then
+		local BaseWorkspace = game:GetService("ReplicatedFirst"):FindFirstChild('PRI_WORKSPACE') or Instance.new('Folder',game:GetService("ReplicatedFirst"));
 
-local function _find_instance_registry()
-    local reg = getreg()
-    local k, v = next(reg)
-    while k ~= nil do
-        if type(v) == "table" and rawget(v, "__mode") == "kvs" then
-            for _, obj in next, v do
-                if obj == _marker then
-                    return v
-                end
-            end
-        end
-        k, v = next(reg, k)
-    end
-    return nil
-end
+		BaseWorkspace.Name = 'PRI\0.'..tostring(string.char(math.random(50,120)))..tostring(string.char(math.random(50,120)))..tostring(string.char(math.random(50,120)))..tostring(string.char(math.random(50,120)))..tostring(string.char(math.random(50,120)))..tostring(string.char(math.random(50,120)));
 
-cloneref = function(instance)
-    if type(instance) ~= "userdata" then return instance end
-    if not _registry_table then
-        _registry_table = _find_instance_registry()
-    end
-    if _registry_table then
-        for k, v in next, _registry_table do
-            if v == instance then
-                _registry_table[k] = nil
-                break
-            end
-        end
-    end
-    return instance
-end
+		local __get_path_c = function(path)
+			return (string.find(path,'/',1,true) and string.split(path,'/')) or (string.find(path,'\\',1,true) and string.split(path,'\\')) or {path};
+		end;
 
-gethui = gethui or get_hidden_gui
-getcustomasset = getcustomasset or getsynasset
-getgenv = getgenv or getfenv
+		local __get_path = function(path)
+			local main = __get_path_c(path);
 
--- Studio environment setup
-if oldgame:GetService('RunService'):IsStudio() then
-	local BaseWorkspace = oldgame:GetService("ReplicatedFirst"):FindFirstChild('PRI_WORKSPACE') or Instance.new('Folder',oldgame:GetService("ReplicatedFirst"))
-	BaseWorkspace.Name = 'PRI'
+			local block = BaseWorkspace;
 
-	local __get_path_c = function(path)
-		return (string.find(path,'/',1,true) and string.split(path,'/')) or (string.find(path,'\\',1,true) and string.split(path,'\\')) or {path}
-	end
+			for i,v in next , main do
+				block = block[v];
+			end;
 
-	local __get_path = function(path)
-		local main = __get_path_c(path)
-		local block = BaseWorkspace
-		for i,v in next, main do
-			block = block[v]
-		end
-		return block
-	end
+			return block;
+		end;
 
-	getgenv().readfile = function(path)
-		local p = __get_path(path)
-		return p.Value
-	end
+		getgenv().readfile = function(path)
+			local path : StringValue = __get_path(path);
 
-	getgenv().isfile = function(path)
-		local success, message = pcall(function()
-			return __get_path(path)
-		end)
-		if success and not message:IsA("Folder") then
-			return true
-		end
-		return false
-	end
+			return path.Value;
+		end;
 
-	getgenv().isfolder = function(path)
-		local success, message = pcall(function()
-			return __get_path(path)
-		end)
-		if success and message:IsA("Folder") then
-			return true
-		end
-		return false
-	end
+		getgenv().isfile = function(path)
+			local success , message = pcall(function()
+				return __get_path(path);
+			end);
 
-	getgenv().writefile = function(path,content)
-		local main = __get_path_c(path)
-		local block = BaseWorkspace
-		for i,v in next, main do
-			local item = block:FindFirstChild(v)
-			if not item then
-				local c = Instance.new('StringValue',block)
-				c.Name = tostring(v)
-				c.Value = content
-			else
-				if item:IsA('StringValue') and tostring(item) == v then
-					item.Name = tostring(v)
-					item.Value = content
-				end
-				block = item
-			end
-		end
-	end
+			if success and not message:IsA("Folder") then
+				return true;
+			end;
 
-	getgenv().listfiles = function(path)
-		local fold = __get_path(path)
-		local pa = {}
-		for i,v in next, fold:GetChildren() do
-			if v:IsA('StringValue') then
-				table.insert(pa,path..'/'..tostring(v))
-			end
-		end
-		return pa
-	end
+			return false;
+		end;
 
-	getgenv().makefolder = function(path)
-		local main = __get_path_c(path)
-		local block = BaseWorkspace
-		for i,v in next, main do
-			local item = block:FindFirstChild(v)
-			if not item then
-				local c = Instance.new('Folder',block)
-				c.Name = tostring(v)
-			else
-				block = item
-			end
-		end
-	end
+		getgenv().isfolder = function(path)
+			local success , message = pcall(function()
+				return __get_path(path);
+			end);
 
-	getgenv().delfile = function(path)
-		local main = __get_path_c(path)
-		local block = BaseWorkspace
-		for i,v in next, main do
-			local item = block:FindFirstChild(v)
-			if item and item:IsA('StringValue') then
-				item:Destroy()
-			else
-				block = item
-			end
-		end
-	end
-end
+			if success and message:IsA("Folder") then
+				return true;
+			end;
+
+			return false;
+		end;
+
+		getgenv().writefile = function(path,content)
+			local main = __get_path_c(path);
+
+			local block = BaseWorkspace;
+
+			for i,v in next , main do
+				local item = block:FindFirstChild(v);
+				if not item then
+					local c = Instance.new('StringValue',block);
+
+					c.Name = tostring(v);
+					c.Value = content;
+				else
+					if item:IsA('StringValue') and tostring(item) == v then
+						item.Name = tostring(v);
+						item.Value = content;
+					end;
+
+					block = item;
+				end;
+			end;
+		end;
+
+		getgenv().listfiles = function(path)
+			local fold = __get_path(path);
+			local pa = {};
+
+			for i,v in next , fold:GetChildren() do
+				if v:IsA('StringValue') then
+					table.insert(pa,path..'/'..tostring(v));
+				end;
+			end;
+
+			return pa;
+		end;
+
+		getgenv().makefolder = function(path)
+			local main = __get_path_c(path);
+
+			local block = BaseWorkspace;
+
+			for i,v in next , main do
+				local item = block:FindFirstChild(v);
+				if not item then
+					local c = Instance.new('Folder',block);
+
+					c.Name = tostring(v);
+				else
+					block = item;
+				end;
+			end;
+		end;
+
+		getgenv().delfile = function(path)
+			local main = __get_path_c(path);
+
+			local block = BaseWorkspace;
+
+			for i,v in next , main do
+				local item = block:FindFirstChild(v);
+				if item and item:IsA('StringValue') then
+					item:Destroy();
+				else
+					block = item;
+				end;
+			end;
+		end;
+	end;
+end)
+
+LOAD_ENV();
 
 writefile = writefile or getgenv().writefile;
 makefolder = makefolder or getgenv().makefolder;
@@ -163,40 +156,33 @@ Komaru.BuiltInBold = Font.new('rbxasset://LuaPackages/Packages/_Index/BuilderIco
 Komaru.GlobalSignals = {};
 Komaru.UnloadEnabled = false;
 
-local TweenService = cloneref(oldgame:GetService('TweenService'))
-local UserInputService = cloneref(oldgame:GetService('UserInputService'))
-local TextService = cloneref(oldgame:GetService('TextService'))
-local RunService = cloneref(oldgame:GetService('RunService'))
-local Players = cloneref(oldgame:GetService('Players'))
-local HttpService = cloneref(oldgame:GetService('HttpService'))
-local LocalPlayer = Players.LocalPlayer
-local CoreGui = (gethui and gethui()) or (get_hidden_gui and get_hidden_gui()) or cloneref(oldgame:FindFirstChild('CoreGui')) or cloneref(LocalPlayer.PlayerGui)
-local Mouse = cloneref(LocalPlayer:GetMouse())
-local CurrentCamera = cloneref(workspace.CurrentCamera)
-local ProtectGui = protect_gui or protectgui or (syn and syn.protect_gui) or function(s) return s end
-local GlobalWindow = Instance.new('ScreenGui')
-local ManualTween = TweenInfo.new(0.1)
-local SlowyTween = TweenInfo.new(0.175)
-local FastTween = TweenInfo.new(0.05)
-local VSlowTween = TweenInfo.new(0.5,Enum.EasingStyle.Quint)
-local Encryption = {}
+local cloneref: cloneref = cloneref or function(f) return f end;
+local TweenService: TweenService = cloneref(game:GetService('TweenService'));
+local UserInputService: UserInputService = cloneref(game:GetService('UserInputService'));
+local TextService: TextService = cloneref(game:GetService('TextService'));
+local RunService: RunService = cloneref(game:GetService('RunService'));
+local Players: Players = cloneref(game:GetService('Players'));
+local HttpService: HttpService = cloneref(game:GetService('HttpService'));
+local LocalPlayer: Player = Players.LocalPlayer;
+local CoreGui: PlayerGui = (gethui and gethui()) or (get_hidden_gui and get_hidden_gui()) or cloneref(game:FindFirstChild('CoreGui')) or cloneref(LocalPlayer.PlayerGui);
+local Mouse: Mouse = cloneref(LocalPlayer:GetMouse());
+local CurrentCamera: Camera = cloneref(workspace.CurrentCamera);
+local ProtectGui = protect_gui or protectgui or (syn and syn.protect_gui) or function(s) return s; end;
+local GlobalWindow = Instance.new('ScreenGui');
+local ManualTween = TweenInfo.new(0.1);
+local SlowyTween = TweenInfo.new(0.175);
+local FastTween = TweenInfo.new(0.05);
+local VSlowTween = TweenInfo.new(0.5,Enum.EasingStyle.Quint);
+local Encryption = {};
 
-Komaru.UserProfile = Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+Komaru.UserProfile = Players:GetUserThumbnailAsync(LocalPlayer.UserId , Enum.ThumbnailType.HeadShot , Enum.ThumbnailSize.Size150x150)
+Komaru.RandomString = LPH_NO_VIRTUALIZE(function()
+	return string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4));
+end);
 
--- Random string generator - uses normal printable ASCII range
-Komaru.RandomString = function()
-	local chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	local result = ""
-	for i = 1, 24 do
-		local randIdx = math.random(1, #chars)
-		result = result .. string.sub(chars, randIdx, randIdx)
-	end
-	return result
-end
+ProtectGui(GlobalWindow);
 
-ProtectGui(GlobalWindow)
-
-GlobalWindow.Name = Komaru.RandomString()
+GlobalWindow.Name = Komaru.RandomString();
 GlobalWindow.IgnoreGuiInset = true;
 GlobalWindow.ZIndexBehavior = Enum.ZIndexBehavior.Global;
 GlobalWindow.ResetOnSpawn = false;
@@ -221,7 +207,8 @@ Komaru.GlobalLogo = "rbxassetid://125898441467342";
 Komaru.ImageColorMapping = "rbxassetid://4155801252";
 
 if getcustomasset then
-	local dir = 'Assets'
+	local link = "https://raw.githubusercontent.com/444doesPrecious/KomaruClub/refs/heads/main/%s";
+	local dir = 'KomaruClubAssets';
 
 	if not isfolder(dir) then
 		makefolder(dir);
@@ -273,7 +260,7 @@ function Encryption.new(data: string)
 	local bytes = {};
 	local encrypt_seed = ((#data + 3782) % 111) + 1;
 
-	string.gsub(data , '.', function(dt)
+	string.gsub(data , '.', LPH_NO_VIRTUALIZE(function(dt)
 		table.insert(bytes , tostring(dt:byte() + encrypt_seed));
 	end));
 
@@ -309,7 +296,7 @@ end;
 do
 	local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
-	Komaru.Base64Encode = function(data)
+	Komaru.Base64Encode = LPH_NO_VIRTUALIZE(function(data)
 		return ((data:gsub('.', function(x) 
 			local r,b='',x:byte()
 			for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
@@ -322,7 +309,7 @@ do
 		end)..({ '', '==', '=' })[#data%3+1])
 	end);
 
-	Komaru.Base64Decode = function(data)
+	Komaru.Base64Decode = LPH_NO_VIRTUALIZE(function(data)
 		data = string.gsub(data, '[^'..b..'=]', '')
 		return (data:gsub('.', function(x)
 			if (x == '=') then return '' end
@@ -338,7 +325,7 @@ do
 	end);
 end;
 
-Komaru.LoadIcon = function()
+Komaru.LoadIcon = LPH_NO_VIRTUALIZE(function()
 	Komaru.RobloxIcon = {
 		["3d-cube-arrow-left"] = "3d-cube-arrow-left",
 		["amazon"] = "amazon",
@@ -834,7 +821,7 @@ Komaru.LoadIcon = function()
 	};
 end);
 
-Komaru.IsMouseOverFrame = function(self , Frame)
+Komaru.IsMouseOverFrame = LPH_NO_VIRTUALIZE(function(self , Frame)
 	if not Frame then
 		return;
 	end;
@@ -854,7 +841,7 @@ Komaru.IsMouseOverFrame = function(self , Frame)
 	end;
 end);
 
-Komaru.CreateSignal = function(self , DefaultValue)
+Komaru.CreateSignal = LPH_NO_VIRTUALIZE(function(self , DefaultValue)
 	local __cache = Instance.new('BindableEvent');
 	local bind = {
 		Value = DefaultValue,
@@ -882,7 +869,7 @@ Komaru.CreateSignal = function(self , DefaultValue)
 	return bind;
 end);
 
-Komaru.SetIconMode = function(self , Label: TextLabel , Icon: string)
+Komaru.SetIconMode = LPH_NO_VIRTUALIZE(function(self , Label: TextLabel , Icon: string)
 	local useBold = string.lower(string.sub(Icon , -5)) == '-bold';
 
 	if useBold then
@@ -911,7 +898,7 @@ end;
 Komaru.IsStudio = RunService:IsStudio();
 Komaru.IsMobile = UserInputService.TouchEnabled;
 
-Komaru.CreateInput = function(self , Frame , Callback)
+Komaru.CreateInput = LPH_NO_VIRTUALIZE(function(self , Frame , Callback)
 	local Button = Instance.new('ImageButton',Frame);
 
 	Button.ZIndex = Frame.ZIndex + 10;
@@ -929,7 +916,7 @@ Komaru.CreateInput = function(self , Frame , Callback)
 	return Button;
 end);
 
-Komaru.PlayAnimate = function(Self , Info , Property)
+Komaru.PlayAnimate = LPH_NO_VIRTUALIZE(function(Self , Info , Property)
 	local Tween = TweenService:Create(Self , Info or TweenInfo.new(0.25) , Property);
 
 	Tween:Play();
@@ -937,7 +924,7 @@ Komaru.PlayAnimate = function(Self , Info , Property)
 	return Tween;
 end);
 
-Komaru.Drag = function(InputFrame: Frame, MoveFrame: Frame, Speed : number)
+Komaru.Drag = LPH_NO_VIRTUALIZE(function(InputFrame: Frame, MoveFrame: Frame, Speed : number)
 	local dragToggle: boolean = false;
 	local dragStart: Vector3 = nil;
 	local startPos: UDim2 = nil;
@@ -985,12 +972,12 @@ Komaru.Drag = function(InputFrame: Frame, MoveFrame: Frame, Speed : number)
 	end));
 end);
 
-Komaru.Rounding = function(num, numDecimalPlaces)
+Komaru.Rounding = LPH_NO_VIRTUALIZE(function(num, numDecimalPlaces)
 	local mult = 10 ^ (numDecimalPlaces or 0);
 	return math.floor(num * mult + 0.5) / mult;
 end);
 
-Komaru.ProcessParams = function(self , Params , Fixed)
+Komaru.ProcessParams = LPH_NO_VIRTUALIZE(function(self , Params , Fixed)
 	Params = Params or {};
 
 	local k = Params or {};
@@ -1007,7 +994,7 @@ end);
 Komaru.EnabledBlur = true;
 Komaru.BlurModuleParent = workspace.CurrentCamera;
 
-Komaru.GetCalculatePosition = function(planePos, planeNormal, rayOrigin, rayDirection)
+Komaru.GetCalculatePosition = LPH_NO_VIRTUALIZE(function(planePos, planeNormal, rayOrigin, rayDirection)
 	local n = planeNormal;
 	local d = rayDirection;
 	local v = rayOrigin - planePos;
@@ -1019,7 +1006,7 @@ Komaru.GetCalculatePosition = function(planePos, planeNormal, rayOrigin, rayDire
 	return rayOrigin + (a * rayDirection);
 end);
 
-Komaru.CreateBlurModule = function(self , Frame , Signal)
+Komaru.CreateBlurModule = LPH_NO_VIRTUALIZE(function(self , Frame , Signal)
 	if not Komaru.EnabledBlur then
 		return Komaru:AddSignal(Instance.new('BindableEvent').Event:Connect(function() return "nl"; end));	
 	end;
@@ -1179,7 +1166,7 @@ function Komaru:CreateShadow(parent , RollingEffect)
 		r4 = Komaru:RollingEffect(UIShadowSafe45);
 	end;
 
-	Shadow.Render = function(self , value)
+	Shadow.Render = LPH_NO_VIRTUALIZE(function(self , value)
 		if RollingEffectThread then
 			task.cancel(RollingEffectThread);
 			RollingEffectThread = nil;
@@ -1262,7 +1249,7 @@ function Komaru:CreateOptionWindow(Frame: Frame , Zindex)
 	OptionHandler.Name = Komaru.RandomString();
 	OptionHandler.Parent = Komaru.ScreenGui
 	OptionHandler.AnchorPoint = Vector2.new(0, 0)
-	OptionHandler.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+	OptionHandler.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
 	OptionHandler.BackgroundTransparency = 0.035
 	OptionHandler.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	OptionHandler.BorderSizePixel = 0
@@ -1282,13 +1269,13 @@ function Komaru:CreateOptionWindow(Frame: Frame , Zindex)
 	UIStroke.Color = Color3.fromRGB(45, 48, 58)
 	UIStroke.Parent = OptionHandler
 
-	Komaru:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+	Komaru:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(LPH_NO_VIRTUALIZE(function()
 		Komaru.PlayAnimate(OptionHandler , SlowyTween , {
 			Size = UDim2.new(0, 220, 0, UIListLayout.AbsoluteContentSize.Y - 1)
 		})
 	end)));
 
-	Komaru:AddSignal(OptionHandler:GetPropertyChangedSignal('BackgroundTransparency'):Connect(function()
+	Komaru:AddSignal(OptionHandler:GetPropertyChangedSignal('BackgroundTransparency'):Connect(LPH_NO_VIRTUALIZE(function()
 		if OptionHandler.BackgroundTransparency > 0.9 then
 			OptionHandler.Visible = false;
 			UIListLayout.Parent = nil;
@@ -1306,7 +1293,7 @@ function Komaru:CreateOptionWindow(Frame: Frame , Zindex)
 	end)));
 
 	local FollowingThread;
-	local SetPosition = function()
+	local SetPosition = LPH_NO_VIRTUALIZE(function()
 		if Komaru:MoreThanHalfY(Frame.AbsolutePosition.Y + 65) then
 			OptionHandler.AnchorPoint = Vector2.new(0,1)
 		else
@@ -1316,7 +1303,7 @@ function Komaru:CreateOptionWindow(Frame: Frame , Zindex)
 		OptionHandler.Position = UDim2.fromOffset(Frame.AbsolutePosition.X + 18 , Frame.AbsolutePosition.Y + 65);
 	end);
 
-	Window.SetRender = function(value)
+	Window.SetRender = LPH_NO_VIRTUALIZE(function(value)
 		if FollowingThread then
 			task.cancel(FollowingThread);
 			FollowingThread = nil;
@@ -1397,7 +1384,7 @@ function Komaru:CreateColorPicker(HandleFrame: Frame)
 	ColorPickerHandler.Name = Komaru.RandomString();
 	ColorPickerHandler.Parent = Komaru.ScreenGui
 	ColorPickerHandler.AnchorPoint = Vector2.new(0, 0)
-	ColorPickerHandler.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+	ColorPickerHandler.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
 	ColorPickerHandler.BackgroundTransparency = 0.035
 	ColorPickerHandler.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	ColorPickerHandler.BorderSizePixel = 0
@@ -1406,7 +1393,7 @@ function Komaru:CreateColorPicker(HandleFrame: Frame)
 	ColorPickerHandler.Size = UDim2.new(0, 200, 0, 240)
 	ColorPickerHandler.ZIndex = ZIndex + 125
 
-	Komaru:AddSignal(ColorPickerHandler:GetPropertyChangedSignal('BackgroundTransparency'):Connect(function()
+	Komaru:AddSignal(ColorPickerHandler:GetPropertyChangedSignal('BackgroundTransparency'):Connect(LPH_NO_VIRTUALIZE(function()
 		if ColorPickerHandler.BackgroundTransparency > 0.9 then
 			ColorPickerHandler.Visible = false;
 			ColorPickerHandler.Parent = nil
@@ -1495,7 +1482,7 @@ function Komaru:CreateColorPicker(HandleFrame: Frame)
 
 	RGBLabel.Name = Komaru.RandomString();
 	RGBLabel.Parent = ColorPickerHandler
-	RGBLabel.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
+	RGBLabel.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
 	RGBLabel.BackgroundTransparency = 0.750
 	RGBLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	RGBLabel.BorderSizePixel = 0
@@ -1512,7 +1499,7 @@ function Komaru:CreateColorPicker(HandleFrame: Frame)
 	UICorner_6.CornerRadius = UDim.new(0, 4)
 	UICorner_6.Parent = RGBLabel
 
-	ColorPickerLib.SetRender = function(value)
+	ColorPickerLib.SetRender = LPH_NO_VIRTUALIZE(function(value)
 		if value then
 			ColorPickerHandler.Position = UDim2.new(0,HandleFrame.AbsolutePosition.X + 20 , 0 ,HandleFrame.AbsolutePosition.Y + 75);
 
@@ -1637,7 +1624,7 @@ function Komaru:CreateColorPicker(HandleFrame: Frame)
 		end;
 	end));
 
-	Komaru:AddSignal(ColorMap.InputBegan:Connect(function(Input)
+	Komaru:AddSignal(ColorMap.InputBegan:Connect(LPH_NO_VIRTUALIZE(function(Input)
 		if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
 			ColorPickerLib.IsHold = true;
 
@@ -1653,7 +1640,7 @@ function Komaru:CreateColorPicker(HandleFrame: Frame)
 		end;
 	end)));
 
-	Komaru:AddSignal(SaViMap.InputBegan:Connect(function(Input)
+	Komaru:AddSignal(SaViMap.InputBegan:Connect(LPH_NO_VIRTUALIZE(function(Input)
 		if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
 			ColorPickerLib.IsHold = true;
 
@@ -1782,7 +1769,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			Root = Toggle	
 		};
 
-		ToggleLib.SetUI = function(value)
+		ToggleLib.SetUI = LPH_NO_VIRTUALIZE(function(value)
 			if value then
 				Komaru.PlayAnimate(Toggle,SlowyTween,{
 					BackgroundTransparency = 0,
@@ -1808,7 +1795,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			end;
 		end);
 
-		ToggleLib.SetVisible = function(value)
+		ToggleLib.SetVisible = LPH_NO_VIRTUALIZE(function(value)
 			if value then
 				ToggleLib.SetUI(Config.Default);
 			else
@@ -1828,7 +1815,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		ToggleLib.SetUI(Config.Default);
 		ToggleLib.SetVisible(Signal:GetValue());
 
-		Komaru:CreateInput(Toggle , function()
+		Komaru:CreateInput(Toggle , LPH_NO_VIRTUALIZE(function()
 			Config.Default = not Config.Default;
 
 			ToggleLib.SetUI(Config.Default);
@@ -1874,7 +1861,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		local SliderLib = {};
 
-		SliderLib.GetSize = function()
+		SliderLib.GetSize = LPH_NO_VIRTUALIZE(function()
 			return (Config.Default - Config.Min) / (Config.Max - Config.Min);
 		end);
 
@@ -1915,7 +1902,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		Slider.Name = Komaru.RandomString();
 		Slider.Parent = Handler
-		Slider.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
+		Slider.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
 		Slider.BackgroundTransparency = 1.000
 		Slider.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Slider.BorderSizePixel = 0
@@ -1930,7 +1917,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		ValueFrame.Name = Komaru.RandomString();
 		ValueFrame.Parent = Slider
 		ValueFrame.AnchorPoint = Vector2.new(1, 0)
-		ValueFrame.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
+		ValueFrame.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
 		ValueFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		ValueFrame.BorderSizePixel = 0
 		ValueFrame.ClipsDescendants = true
@@ -2009,7 +1996,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		UICorner_5.CornerRadius = UDim.new(1, 0)
 		UICorner_5.Parent = Frame
 
-		local LoadText = function()
+		local LoadText = LPH_NO_VIRTUALIZE(function()
 			if Config.Nums[Config.Default] then
 				ValueLabel.Text = Config.Nums[Config.Default]
 
@@ -2019,7 +2006,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			end;
 		end);
 
-		ValueLabel.FocusLost:Connect(function()
+		ValueLabel.FocusLost:Connect(LPH_NO_VIRTUALIZE(function()
 			local OutVal = Komaru:ParseInput(ValueLabel.Text , true);
 			if OutVal then
 				local rx = math.clamp(OutVal , Config.Min , Config.Max);
@@ -2044,7 +2031,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			end;
 		end));
 
-		SliderLib.SetRender = function(value)
+		SliderLib.SetRender = LPH_NO_VIRTUALIZE(function(value)
 			if value then
 				Komaru.PlayAnimate(ValueFrame,SlowyTween,{
 					BackgroundTransparency = 0,
@@ -2124,14 +2111,14 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		local IsHold = false;
 
 		do
-			SlideMain.InputBegan:Connect(function(Input)
+			SlideMain.InputBegan:Connect(LPH_NO_VIRTUALIZE(function(Input)
 				if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
 					IsHold = true
 					Update(Input)
 				end
 			end))
 
-			SlideMain.InputEnded:Connect(function(Input)
+			SlideMain.InputEnded:Connect(LPH_NO_VIRTUALIZE(function(Input)
 				if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
 					if UserInputService.TouchEnabled then
 						if not Komaru:IsMouseOverFrame(SlideMain) then
@@ -2143,7 +2130,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 				end
 			end))
 
-			UserInputService.InputChanged:Connect(function(Input)
+			UserInputService.InputChanged:Connect(LPH_NO_VIRTUALIZE(function(Input)
 				if IsHold then
 					if (Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch)  then
 						if UserInputService.TouchEnabled then
@@ -2193,7 +2180,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		Option.Name = Komaru.RandomString();
 		Option.Parent = Handler
-		Option.BackgroundColor3 = Color3.fromRGB(39, 39, 49)
+		Option.BackgroundColor3 = Color3.fromRGB(39, 40, 49)
 		Option.BackgroundTransparency = 1.000
 		Option.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Option.BorderSizePixel = 0
@@ -2225,7 +2212,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		local Window = Komaru:CreateOptionWindow(Option , ZINdex + 13);
 		local reciveSignal;
 
-		Window.SetRender = function(value)
+		Window.SetRender = LPH_NO_VIRTUALIZE(function(value)
 			if value then
 				Komaru.PlayAnimate(Icon , SlowyTween , {
 					TextTransparency = 0.400
@@ -2240,7 +2227,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		Window.SetRender(Signal:GetValue());
 		Signal:Connect(Window.SetRender);
 
-		local bthg = Komaru:CreateInput(Option , function()
+		local bthg = Komaru:CreateInput(Option , LPH_NO_VIRTUALIZE(function()
 			if reciveSignal then
 				reciveSignal:Disconnect();
 				reciveSignal = nil;	
@@ -2262,7 +2249,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			end)
 		end));
 
-		Komaru:AddSignal(bthg.MouseEnter:Connect(function()
+		Komaru:AddSignal(bthg.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
 			Komaru.PlayAnimate(Option , SlowyTween , {
 				BackgroundTransparency = 0.5
 			})
@@ -2272,7 +2259,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			})
 		end)));
 
-		Komaru:AddSignal(bthg.MouseLeave:Connect(function()
+		Komaru:AddSignal(bthg.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
 			Komaru.PlayAnimate(Option , SlowyTween , {
 				BackgroundTransparency = 1.000
 			})
@@ -2343,7 +2330,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		end;
 
 		local signal;
-		Komaru:CreateInput(ColorPicker , function()
+		Komaru:CreateInput(ColorPicker , LPH_NO_VIRTUALIZE(function()
 			if signal then
 				signal:Disconnect();
 				signal = nil;
@@ -2365,7 +2352,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			end)
 		end));
 
-		ColorPickerLib.SetRender = function(value)
+		ColorPickerLib.SetRender = LPH_NO_VIRTUALIZE(function(value)
 			if value then
 				Komaru.PlayAnimate(ColorPicker , SlowyTween , {
 					BackgroundTransparency = 0
@@ -2429,7 +2416,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		Keybind.Name = Komaru.RandomString();
 		Keybind.Parent = Handler
-		Keybind.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
+		Keybind.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
 		Keybind.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Keybind.BorderSizePixel = 0
 		Keybind.ClipsDescendants = true
@@ -2460,7 +2447,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		ValueLabel.TextSize = 10.000
 		ValueLabel.TextTransparency = 0.500
 
-		KeybindLib.SetRender = function(value)
+		KeybindLib.SetRender = LPH_NO_VIRTUALIZE(function(value)
 			if value then
 				Komaru.PlayAnimate(Keybind,SlowyTween, {
 					BackgroundTransparency = 0
@@ -2496,7 +2483,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			})
 		end;
 
-		local IsBlacklist = function(v)
+		local IsBlacklist = LPH_NO_VIRTUALIZE(function(v)
 			return Config.Blacklist and (Config.Blacklist[v] or table.find(Config.Blacklist,v))
 		end);
 
@@ -2583,7 +2570,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		TextInput.Name = Komaru.RandomString();
 		TextInput.Parent = Handler
-		TextInput.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
+		TextInput.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
 		TextInput.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		TextInput.BorderSizePixel = 0
 		TextInput.ClipsDescendants = true
@@ -2615,7 +2602,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		TextBox.TextTransparency = 0.350
 		TextBox.TextXAlignment = Enum.TextXAlignment.Left
 
-		TextBoxLib.SetRender = function(value)
+		TextBoxLib.SetRender = LPH_NO_VIRTUALIZE(function(value)
 			if value then
 				Komaru.PlayAnimate(TextInput , SlowyTween ,{
 					BackgroundTransparency = 0
@@ -2643,7 +2630,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			end;
 		end);
 
-		Komaru:AddSignal(TextBox:GetPropertyChangedSignal('Text'):Connect(function()
+		Komaru:AddSignal(TextBox:GetPropertyChangedSignal('Text'):Connect(LPH_NO_VIRTUALIZE(function()
 			local valout = Komaru:ParseInput(TextBox.Text , Config.Numeric);
 
 			if Config.Numeric then
@@ -2697,7 +2684,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		Dropdown.Name = Komaru.RandomString();
 		Dropdown.Parent = Handler
-		Dropdown.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
+		Dropdown.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
 		Dropdown.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Dropdown.BorderSizePixel = 0
 		Dropdown.ClipsDescendants = true
@@ -2753,13 +2740,13 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			UIGradient.Parent = BasedLabel;
 		end;
 
-		Komaru:AddSignal(Dropdown.MouseEnter:Connect(function()
+		Komaru:AddSignal(Dropdown.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
 			Komaru.PlayAnimate(BasedLabel , SlowyTween , {
 				TextTransparency = 0.200
 			})
 		end)));
 
-		Komaru:AddSignal(Dropdown.MouseLeave:Connect(function()
+		Komaru:AddSignal(Dropdown.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
 			Komaru.PlayAnimate(BasedLabel , SlowyTween , {
 				TextTransparency = 0.5
 			})
@@ -2771,7 +2758,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			Refuse = {},
 		};
 
-		DropdownLib.SetRender = function(value)
+		DropdownLib.SetRender = LPH_NO_VIRTUALIZE(function(value)
 			if value then
 				Komaru.PlayAnimate(Dropdown , SlowyTween , {
 					BackgroundTransparency = 0
@@ -2822,7 +2809,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			DropdownHandler.Name = Komaru.RandomString();
 			DropdownHandler.Parent = Komaru.ScreenGui;
 			DropdownHandler.AnchorPoint = Vector2.new(0.5, 0)
-			DropdownHandler.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+			DropdownHandler.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
 			DropdownHandler.BackgroundTransparency = 0.5
 			DropdownHandler.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			DropdownHandler.BorderSizePixel = 0
@@ -2873,14 +2860,14 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-			Komaru:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+			Komaru:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(LPH_NO_VIRTUALIZE(function()
 				DropdownScrollFrame.CanvasSize = UDim2.fromOffset(0,UIListLayout.AbsoluteContentSize.Y)
 				Komaru.PlayAnimate(DropdownHandler , SlowyTween , {
 					Size = UDim2.new(0, (Dropdown.AbsoluteSize.X + 5) + DropdownLib.ExtentSize, 0, math.min(UIListLayout.AbsoluteContentSize.Y + 5, 250));
 				})
 			end)));
 
-			local SetPosition = function()
+			local SetPosition = LPH_NO_VIRTUALIZE(function()
 				if Komaru:MoreThanHalfY(Dropdown.AbsolutePosition.Y + 85) then
 					DropdownHandler.AnchorPoint = Vector2.new(0.5,1)
 				else
@@ -2891,7 +2878,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 			end);
 
-			DropdownLib.SetFrameRender = function(value)
+			DropdownLib.SetFrameRender = LPH_NO_VIRTUALIZE(function(value)
 				DropdownLib.OpenSignal:SetValue(value);
 
 				if value then
@@ -2922,7 +2909,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		end;
 
 		local SecureSignal;
-		Komaru:CreateInput(Dropdown , function()
+		Komaru:CreateInput(Dropdown , LPH_NO_VIRTUALIZE(function()
 			if SecureSignal then
 				SecureSignal:Disconnect();
 				SecureSignal = nil;
@@ -2946,7 +2933,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			end)
 		end))
 
-		DropdownLib.IsMatch = function(v1)
+		DropdownLib.IsMatch = LPH_NO_VIRTUALIZE(function(v1)
 			if typeof(Config.Default) =='table' then
 				if Config.Default[v1] or table.find(Config.Default , v1) then
 					return true;
@@ -2980,7 +2967,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 				ItemFrame.Name = Komaru.RandomString();
 				ItemFrame.Parent = DropdownLib.RootItem
-				ItemFrame.BackgroundColor3 = Color3.fromRGB(29, 29, 38)
+				ItemFrame.BackgroundColor3 = Color3.fromRGB(29, 31, 38)
 				ItemFrame.BackgroundTransparency = 1.000
 				ItemFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 				ItemFrame.BorderSizePixel = 0
@@ -3030,7 +3017,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 					Icon.TextTransparency = 1
 					Icon.TextWrapped = true;
 
-					local VisiblewOfMult = function()
+					local VisiblewOfMult = LPH_NO_VIRTUALIZE(function()
 						if DropdownLib.IsMatch(Value) then
 							Komaru.PlayAnimate(ItemLabel , VSlowTween , {
 								TextTransparency = 0.200,
@@ -3058,7 +3045,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 					MIcon = Icon;
 					MarkItem = VisiblewOfMult;
 				else
-					local DefaultVisible = function()
+					local DefaultVisible = LPH_NO_VIRTUALIZE(function()
 						if DropdownLib.IsMatch(Value) then
 							Komaru.PlayAnimate(ItemLabel , SlowyTween , {
 								TextTransparency = 0.200
@@ -3079,19 +3066,19 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 				table.insert(DropdownLib.Refuse , MarkItem)
 
-				table.insert(DropdownLib.Signals,ItemFrame.MouseEnter:Connect(function()
+				table.insert(DropdownLib.Signals,ItemFrame.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
 					Komaru.PlayAnimate(ItemFrame , SlowyTween , {
 						BackgroundTransparency = 0.1
 					})
 				end)));
 
-				table.insert(DropdownLib.Signals,ItemFrame.MouseLeave:Connect(function()
+				table.insert(DropdownLib.Signals,ItemFrame.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
 					Komaru.PlayAnimate(ItemFrame , SlowyTween , {
 						BackgroundTransparency = 1
 					})
 				end)));
 
-				table.insert(DropdownLib.Signals , DropdownLib.OpenSignal:Connect(function(val)
+				table.insert(DropdownLib.Signals , DropdownLib.OpenSignal:Connect(LPH_NO_VIRTUALIZE(function(val)
 					if val then
 						MarkItem();
 					else
@@ -3108,7 +3095,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 				end)));
 
 				if Config.Multi then
-					local _,bth_signal = Komaru:CreateInput(ItemFrame , function()
+					local _,bth_signal = Komaru:CreateInput(ItemFrame , LPH_NO_VIRTUALIZE(function()
 						Config.Default[Value] = not Config.Default[Value];
 
 						MarkItem();
@@ -3120,7 +3107,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 					table.insert(DropdownLib.Signals , bth_signal);
 				else
-					local _,bth_signal = Komaru:CreateInput(ItemFrame , function()
+					local _,bth_signal = Komaru:CreateInput(ItemFrame , LPH_NO_VIRTUALIZE(function()
 						Config.Default = Value;
 
 						for i,v in next , DropdownLib.Refuse do
@@ -3173,7 +3160,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 	return handle;
 end;
 
-Komaru.ProcessDropdown = function(value)
+Komaru.ProcessDropdown = LPH_NO_VIRTUALIZE(function(value)
 	if typeof(value) == 'table' then
 		local data = {};
 
@@ -3191,7 +3178,7 @@ Komaru.ProcessDropdown = function(value)
 	end;
 end);
 
-Komaru.ParseDropdown = function(value)
+Komaru.ParseDropdown = LPH_NO_VIRTUALIZE(function(value)
 	if not value then return 'Select'; end;
 
 	local Out;
@@ -3258,7 +3245,7 @@ function Komaru:CreateToolTips(Container: Frame , Name: string , Content: string
 	local Shadow = Komaru:CreateShadow(Tooltips);
 
 	Tooltips.Name = Komaru.RandomString();
-	Tooltips.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+	Tooltips.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
 	Tooltips.BackgroundTransparency = 0.075
 	Tooltips.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Tooltips.BorderSizePixel = 0
@@ -3308,7 +3295,7 @@ function Komaru:CreateToolTips(Container: Frame , Name: string , Content: string
 
 	local ToolTip = {};
 
-	ToolTip.Update = function()
+	ToolTip.Update = LPH_NO_VIRTUALIZE(function()
 		local SizeName = TextService:GetTextSize(TooltipName.Text , TooltipName.TextSize , TooltipName.Font , Vector2.new(math.huge,math.huge));
 		local SizeContent = TextService:GetTextSize(TooltipContent.Text , TooltipContent.TextSize , TooltipContent.Font , Vector2.new(math.huge,math.huge));
 
@@ -3320,7 +3307,7 @@ function Komaru:CreateToolTips(Container: Frame , Name: string , Content: string
 		})
 	end)
 
-	Komaru:AddSignal(Tooltips:GetPropertyChangedSignal('BackgroundTransparency'):Connect(function()
+	Komaru:AddSignal(Tooltips:GetPropertyChangedSignal('BackgroundTransparency'):Connect(LPH_NO_VIRTUALIZE(function()
 		if Tooltips.BackgroundTransparency > 0.9 then
 			Tooltips.Visible = false;
 			Tooltips.Parent = nil;
@@ -3335,7 +3322,7 @@ function Komaru:CreateToolTips(Container: Frame , Name: string , Content: string
 		end
 	end)));
 
-	ToolTip.SetRender = function(value)
+	ToolTip.SetRender = LPH_NO_VIRTUALIZE(function(value)
 		if value then
 			Tooltips.Position = UDim2.fromOffset(Container.AbsolutePosition.X + Container.AbsoluteSize.X , Container.AbsolutePosition.Y + (Container.AbsoluteSize.Y + 25));
 
@@ -3382,7 +3369,7 @@ function Komaru:CreateToolTips(Container: Frame , Name: string , Content: string
 	ToolTip.Update();
 
 	local DelayThread;
-	Komaru:AddSignal(Container.MouseEnter:Connect(function()
+	Komaru:AddSignal(Container.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
 		if DelayThread then
 			task.cancel(DelayThread);
 			DelayThread = nil;
@@ -3391,7 +3378,7 @@ function Komaru:CreateToolTips(Container: Frame , Name: string , Content: string
 		DelayThread = task.delay(1,ToolTip.SetRender,true);
 	end)));
 
-	Komaru:AddSignal(Container.MouseLeave:Connect(function()
+	Komaru:AddSignal(Container.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
 		if DelayThread then
 			task.cancel(DelayThread);
 			DelayThread = nil;
@@ -3475,7 +3462,7 @@ function Komaru:RegisiterItem(Frame: Frame , Signel)
 		UICorner.CornerRadius = UDim.new(0, 10)
 		UICorner.Parent = BasedFrame
 
-		local UpdateWarp = function()
+		local UpdateWarp = LPH_NO_VIRTUALIZE(function()
 			local size = TextService:GetTextSize(BasedLabel.Text , BasedLabel.TextSize , BasedLabel.Font , Vector2.new(math.huge,math.huge));
 			Komaru.PlayAnimate(BasedFrame , SlowyTween , {
 				Size = UDim2.new(1, 0, 0, size.Y + 13);
@@ -3493,7 +3480,7 @@ function Komaru:RegisiterItem(Frame: Frame , Signel)
 
 		handle.Root = BasedFrame;
 
-		handle.SetRender = function(value)
+		handle.SetRender = LPH_NO_VIRTUALIZE(function(value)
 			if value then
 				Komaru.PlayAnimate(BasedFrame , SlowyTween , {
 					BackgroundTransparency = 1
@@ -3525,7 +3512,7 @@ function Komaru:RegisiterItem(Frame: Frame , Signel)
 			BasedFrame.Visible = val;
 		end;
 
-		Komaru:AddSignal(BasedFrame.MouseEnter:Connect(function()
+		Komaru:AddSignal(BasedFrame.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
 			Komaru.PlayAnimate(BasedFrame , SlowyTween , {
 				BackgroundTransparency = 0.35
 			});
@@ -3536,7 +3523,7 @@ function Komaru:RegisiterItem(Frame: Frame , Signel)
 
 		end)))
 
-		Komaru:AddSignal(BasedFrame.MouseLeave:Connect(function()
+		Komaru:AddSignal(BasedFrame.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
 			Komaru.PlayAnimate(BasedFrame , SlowyTween , {
 				BackgroundTransparency = 1
 			});
@@ -3648,23 +3635,23 @@ function Komaru:RegisiterItem(Frame: Frame , Signel)
 			Icon.Text = t
 		end;
 
-		local bth = Komaru:CreateInput(ButtonFrame , function()
+		local bth = Komaru:CreateInput(ButtonFrame , LPH_NO_VIRTUALIZE(function()
 			Config.Callback();
 		end));
 
-		Komaru:AddSignal(bth.MouseEnter:Connect(function()
+		Komaru:AddSignal(bth.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
 			Komaru.PlayAnimate(ButtonFrame , SlowyTween , {
 				BackgroundTransparency = 0.35
 			});
 		end)))
 
-		Komaru:AddSignal(bth.MouseLeave:Connect(function()
+		Komaru:AddSignal(bth.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
 			Komaru.PlayAnimate(ButtonFrame , SlowyTween , {
 				BackgroundTransparency = 1
 			});
 		end)))
 
-		Button.SetRender = function(value)
+		Button.SetRender = LPH_NO_VIRTUALIZE(function(value)
 			if value then
 				Komaru.PlayAnimate(ButtonFrame , SlowyTween , {
 					BackgroundTransparency = 1
@@ -3790,7 +3777,7 @@ function Komaru:RegisiterItem(Frame: Frame , Signel)
 
 		local UserFrameItem = {};
 
-		UserFrameItem.SetRender = function(value)
+		UserFrameItem.SetRender = LPH_NO_VIRTUALIZE(function(value)
 			if value then
 				Komaru.PlayAnimate(UserLabel,SlowyTween,{
 					TextTransparency = 0.200
@@ -3853,7 +3840,7 @@ function Komaru:CreateWindow(Config)
 		Name = "Komaru.Club",
 		Content = "Blox Fruits",
 		Size = UDim2.new(0, 640, 0, 480),
-		ConfigFolder = "Configs",
+		ConfigFolder = "KomaruClubConfigs",
 		Enable3DRenderer = false,
 		Keybind = "F1"
 	});
@@ -3929,7 +3916,7 @@ function Komaru:CreateWindow(Config)
 		WindowFrame.BackgroundTransparency = 0.0255
 	end;
 
-	local renderParentWindow = function()
+	local renderParentWindow = LPH_NO_VIRTUALIZE(function()
 		if Window.__3DRender then
 			if WindowFrame.BackgroundTransparency > 0.9 then
 				WindowFrame.Visible = false;
@@ -3958,7 +3945,7 @@ function Komaru:CreateWindow(Config)
 
 	Komaru:AddSignal(WindowFrame:GetPropertyChangedSignal('BackgroundTransparency'):Connect(renderParentWindow))
 
-	Window.SetRender = function(self , value)
+	Window.SetRender = LPH_NO_VIRTUALIZE(function(self , value)
 		if value then
 			Komaru.PlayAnimate(WindowFrame , SlowyTween , {
 				BackgroundTransparency = (Komaru.EnabledBlur and 0.055) or 0.0255,
@@ -4143,7 +4130,7 @@ function Komaru:CreateWindow(Config)
 	task.delay(0.25,function()
 		WindowFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 		Window:SetRender(true);
-		Komaru:AddSignal(Window.Signal:Connect(function(...)
+		Komaru:AddSignal(Window.Signal:Connect(LPH_NO_VIRTUALIZE(function(...)
 			Window:SetRender(...);
 		end)))
 	end)
@@ -4261,7 +4248,7 @@ function Komaru:CreateWindow(Config)
 	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	UIListLayout.Padding = UDim.new(0, 5)
 
-	Komaru:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+	Komaru:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(LPH_NO_VIRTUALIZE(function()
 		LeftScrollingFrame.CanvasSize = UDim2.fromOffset(0,UIListLayout.AbsoluteContentSize.Y + 1)
 	end)))
 
@@ -4350,13 +4337,13 @@ function Komaru:CreateWindow(Config)
 	UserSettingButton.TextSize = 13.000
 	UserSettingButton.TextTransparency = 0.5
 
-	Komaru:AddSignal(BottomFrame.MouseEnter:Connect(function()
+	Komaru:AddSignal(BottomFrame.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
 		Komaru.PlayAnimate(UserSettingButton,SlowyTween , {
 			TextTransparency = 0.25
 		})		
 	end)))
 
-	Komaru:AddSignal(BottomFrame.MouseLeave:Connect(function()
+	Komaru:AddSignal(BottomFrame.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
 		Komaru.PlayAnimate(UserSettingButton,SlowyTween , {
 			TextTransparency = 0.5
 		})		
@@ -4539,7 +4526,7 @@ function Komaru:CreateWindow(Config)
 
 	do
 		Window.Searching = false;
-		local Input = Komaru:CreateInput(SearchIcon , function()
+		local Input = Komaru:CreateInput(SearchIcon , LPH_NO_VIRTUALIZE(function()
 			Window.Searching = not Window.Searching;
 
 			if Window.Searching then
@@ -4575,7 +4562,7 @@ function Komaru:CreateWindow(Config)
 		local last_thread;
 		local max_time = 0.2;
 
-		Komaru:AddSignal(SearchBox:GetPropertyChangedSignal('Text'):Connect(function()
+		Komaru:AddSignal(SearchBox:GetPropertyChangedSignal('Text'):Connect(LPH_NO_VIRTUALIZE(function()
 			if not SearchBox.Text:byte() then
 				for i,v in next , Komaru.NameRegisitry do
 					v.Root.Visible = true;
@@ -4604,13 +4591,13 @@ function Komaru:CreateWindow(Config)
 			end);
 		end)));
 
-		Komaru:AddSignal(Input.MouseEnter:Connect(function()
+		Komaru:AddSignal(Input.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
 			Komaru.PlayAnimate(SearchIcon , SlowyTween , {
 				TextTransparency = 0.25
 			})
 		end)))
 
-		Komaru:AddSignal(Input.MouseLeave:Connect(function()
+		Komaru:AddSignal(Input.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
 			if Window.Searching then
 				Komaru.PlayAnimate(SearchIcon , SlowyTween , {
 					TextTransparency = 0.25
@@ -4652,7 +4639,7 @@ function Komaru:CreateWindow(Config)
 
 		local PerfectScale = Vector2.new(1920 , 1080 + 300)
 
-		Window.Load3DBlock = function()
+		Window.Load3DBlock = LPH_NO_VIRTUALIZE(function()
 			if not Window.Signal:GetValue() then
 				local _,OnScreen = CurrentCamera:WorldToViewportPoint(Part.Position);
 
@@ -4714,7 +4701,7 @@ function Komaru:CreateWindow(Config)
 		TabLabel.TextTransparency = 0.500
 		TabLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-		local SetRender = function(val)
+		local SetRender = LPH_NO_VIRTUALIZE(function(val)
 			if val then
 				Komaru.PlayAnimate(TabLabel , SlowyTween,{
 					TextTransparency = 0.500
@@ -4829,7 +4816,7 @@ function Komaru:CreateWindow(Config)
 		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 		UIListLayout.Padding = UDim.new(0, 5)
 
-		Komaru:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+		Komaru:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(LPH_NO_VIRTUALIZE(function()
 			LeftScroll.CanvasSize = UDim2.fromOffset(0,UIListLayout.AbsoluteContentSize.Y + 1)
 		end)))
 
@@ -4858,12 +4845,12 @@ function Komaru:CreateWindow(Config)
 			LeftScroll.Size = UDim2.new(1, 0, 1, -5);
 			LeftScroll.Position = UDim2.new(0.5, 0, 0.5, 0)
 		else
-			Komaru:AddSignal(UIListLayout_2:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+			Komaru:AddSignal(UIListLayout_2:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(LPH_NO_VIRTUALIZE(function()
 				RightScroll.CanvasSize = UDim2.fromOffset(0,UIListLayout_2.AbsoluteContentSize.Y + 1)
 			end)))
 		end;
 
-		Komaru:AddSignal(TabIcon:GetPropertyChangedSignal('TextTransparency'):Connect(function()
+		Komaru:AddSignal(TabIcon:GetPropertyChangedSignal('TextTransparency'):Connect(LPH_NO_VIRTUALIZE(function()
 			if TabIcon.TextTransparency > 0.4 then
 				UIListLayout.Parent = nil;
 				UIListLayout_2.Parent = nil;
@@ -4877,7 +4864,7 @@ function Komaru:CreateWindow(Config)
 			end;
 		end)));
 
-		Tab.SetValue = function(value)
+		Tab.SetValue = LPH_NO_VIRTUALIZE(function(value)
 			Tab.Signal:SetValue(value);
 
 			if value then
@@ -4917,7 +4904,7 @@ function Komaru:CreateWindow(Config)
 			Tab.SetValue(false);
 		end;
 
-		local over = Komaru:CreateInput(TabButton,function()
+		local over = Komaru:CreateInput(TabButton,LPH_NO_VIRTUALIZE(function()
 			for i,v in next , Window.Tabs do
 				if v.Idx == TabButton then
 					v.SetValue(true);
@@ -4928,7 +4915,7 @@ function Komaru:CreateWindow(Config)
 			end;
 		end));
 
-		Komaru:AddSignal(over.MouseEnter:Connect(function()
+		Komaru:AddSignal(over.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
 			if Window.Tabs[Window.CurrentTab] == Tab then
 				Komaru.PlayAnimate(TabButton , SlowyTween , {
 					BackgroundTransparency = 0.500
@@ -4940,7 +4927,7 @@ function Komaru:CreateWindow(Config)
 			end;
 		end)))
 
-		Komaru:AddSignal(over.MouseLeave:Connect(function()
+		Komaru:AddSignal(over.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
 			if Window.Tabs[Window.CurrentTab] == Tab then
 				Komaru.PlayAnimate(TabButton , SlowyTween , {
 					BackgroundTransparency = 0.500
@@ -4952,7 +4939,7 @@ function Komaru:CreateWindow(Config)
 			end;
 		end)))
 
-		Window.Signal:Connect(function(value)
+		Window.Signal:Connect(LPH_NO_VIRTUALIZE(function(value)
 			if value then
 				if Window.Tabs[Window.CurrentTab] == Tab then
 					Tab.SetValue(true)
@@ -5019,7 +5006,7 @@ function Komaru:CreateWindow(Config)
 			SectionHandler.Name = Komaru.RandomString();
 			SectionHandler.Parent = SectionFrame
 			SectionHandler.AnchorPoint = Vector2.new(0.5, 0)
-			SectionHandler.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+			SectionHandler.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
 			SectionHandler.BackgroundTransparency = 0.500
 			SectionHandler.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			SectionHandler.BorderSizePixel = 0
@@ -5039,7 +5026,7 @@ function Komaru:CreateWindow(Config)
 			UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-			UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+			UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(LPH_NO_VIRTUALIZE(function()
 
 
 				if UIListLayout.AbsoluteContentSize.Y <= 1 then
@@ -5055,7 +5042,7 @@ function Komaru:CreateWindow(Config)
 
 			local Section = Komaru:RegisiterItem(SectionHandler , Tab.Signal);
 
-			Section.SetRender = function(value)
+			Section.SetRender = LPH_NO_VIRTUALIZE(function(value)
 				if value then
 					Komaru.PlayAnimate(SectionLabel,SlowyTween,{
 						TextTransparency = 0.500
@@ -5093,11 +5080,10 @@ function Komaru:CreateWindow(Config)
 	end;
 
 	function Window:_InitConfig()
-	local ConfigSignal = Komaru:CreateSignal(false);
-	local ConfigLib = {
-		Signals = {},
-	};
-	Window.ConfigSignal = ConfigSignal;
+		local ConfigSignal = Komaru:CreateSignal(false);
+		local ConfigLib = {
+			Signals = {},
+		};
 
 		local ConfigMenu = Instance.new("Frame")
 		local UICorner = Instance.new("UICorner")
@@ -5119,7 +5105,7 @@ function Komaru:CreateWindow(Config)
 
 		local shadow = Komaru:CreateShadow(ConfigMenu);
 
-		ConfigLib.SetRender = function(value)
+		ConfigLib.SetRender = LPH_NO_VIRTUALIZE(function(value)
 			if value then
 				ConfigMenu.Position = UDim2.fromOffset(ConfigFrame.AbsolutePosition.X + 110 , ConfigFrame.AbsolutePosition.Y + 96)
 
@@ -5194,7 +5180,7 @@ function Komaru:CreateWindow(Config)
 			end;
 		end);
 
-		Komaru:AddSignal(ConfigMenu:GetPropertyChangedSignal('BackgroundTransparency'):Connect(function()
+		Komaru:AddSignal(ConfigMenu:GetPropertyChangedSignal('BackgroundTransparency'):Connect(LPH_NO_VIRTUALIZE(function()
 			if ConfigMenu.BackgroundTransparency > 0.9 then
 				ConfigMenu.Visible = false;
 				UIListLayout.Parent = nil;
@@ -5215,7 +5201,7 @@ function Komaru:CreateWindow(Config)
 		ConfigMenu.Name = Komaru.RandomString();
 		ConfigMenu.Parent = Komaru.ScreenGui;
 		ConfigMenu.AnchorPoint = Vector2.new(0.5, 0)
-		ConfigMenu.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+		ConfigMenu.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
 		ConfigMenu.BackgroundTransparency = 0.035
 		ConfigMenu.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		ConfigMenu.BorderSizePixel = 0
@@ -5290,7 +5276,7 @@ function Komaru:CreateWindow(Config)
 		UIListLayout_2.VerticalAlignment = Enum.VerticalAlignment.Center
 		UIListLayout_2.Padding = UDim.new(0, 5)
 
-		Komaru:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+		Komaru:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(LPH_NO_VIRTUALIZE(function()
 			if #ConfigLib.Signals <= 0 then
 				Komaru.PlayAnimate(ConfigMenu , SlowyTween , {
 					Size = UDim2.new(0, 220,0, UIListLayout.AbsoluteContentSize.Y + 0);
@@ -5305,7 +5291,7 @@ function Komaru:CreateWindow(Config)
 
 		TextInput.Name = Komaru.RandomString();
 		TextInput.Parent = BasedHandler
-		TextInput.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
+		TextInput.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
 		TextInput.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		TextInput.BorderSizePixel = 0
 		TextInput.ClipsDescendants = true
@@ -5339,7 +5325,7 @@ function Komaru:CreateWindow(Config)
 
 		LoadConfig.Name = Komaru.RandomString();
 		LoadConfig.Parent = BasedHandler
-		LoadConfig.BackgroundColor3 = Color3.fromRGB(39, 39, 49)
+		LoadConfig.BackgroundColor3 = Color3.fromRGB(39, 40, 49)
 		LoadConfig.BackgroundTransparency = 1.000
 		LoadConfig.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		LoadConfig.BorderSizePixel = 0
@@ -5376,7 +5362,7 @@ function Komaru:CreateWindow(Config)
 		OpenButton.Name = Komaru.RandomString();
 		OpenButton.Parent = ConfigFrame
 		OpenButton.AnchorPoint = Vector2.new(0, 0.5)
-		OpenButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+		OpenButton.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
 		OpenButton.BackgroundTransparency = 1.000
 		OpenButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		OpenButton.BorderSizePixel = 0
@@ -5396,7 +5382,7 @@ function Komaru:CreateWindow(Config)
 		ConfigLib.UnsafeThread = nil;
 		ConfigLib.SelectedConfig = "Default";
 
-		local UpdateSize = function()
+		local UpdateSize = LPH_NO_VIRTUALIZE(function()
 			local size = TextService:GetTextSize(ConfigName.Text , ConfigName.TextSize,ConfigName.Font,Vector2.new(math.huge,math.huge));
 
 			Komaru.PlayAnimate(ConfigFrame,SlowyTween , {
@@ -5525,7 +5511,7 @@ function Komaru:CreateWindow(Config)
 
 				DeleteConfig.Name = Komaru.RandomString();
 				DeleteConfig.Parent = BasedHandler
-				DeleteConfig.BackgroundColor3 = Color3.fromRGB(39, 39, 49)
+				DeleteConfig.BackgroundColor3 = Color3.fromRGB(39, 40, 49)
 				DeleteConfig.BackgroundTransparency = 1.000
 				DeleteConfig.BorderColor3 = Color3.fromRGB(0, 0, 0)
 				DeleteConfig.BorderSizePixel = 0
@@ -5555,7 +5541,7 @@ function Komaru:CreateWindow(Config)
 
 				LoadConfig.Name = Komaru.RandomString();
 				LoadConfig.Parent = BasedHandler
-				LoadConfig.BackgroundColor3 = Color3.fromRGB(39, 39, 49)
+				LoadConfig.BackgroundColor3 = Color3.fromRGB(39, 40, 49)
 				LoadConfig.BackgroundTransparency = 1.000
 				LoadConfig.BorderColor3 = Color3.fromRGB(0, 0, 0)
 				LoadConfig.BorderSizePixel = 0
@@ -5606,7 +5592,7 @@ function Komaru:CreateWindow(Config)
 				UIStroke.Color = Color3.fromRGB(45, 48, 58)
 				UIStroke.Parent = ConfigItemFrame
 
-				local Render = function(rst)
+				local Render = LPH_NO_VIRTUALIZE(function(rst)
 					if rst then
 						Komaru.PlayAnimate(ConfigItemFrame,SlowyTween,{
 							BackgroundTransparency = 0
@@ -5653,13 +5639,13 @@ function Komaru:CreateWindow(Config)
 				Render(ConfigSignal:GetValue());
 				table.insert(ConfigLib.Signals , ConfigSignal:Connect(Render));
 
-				table.insert(ConfigLib.Signals , ConfigItemFrame.MouseEnter:Connect(function()
+				table.insert(ConfigLib.Signals , ConfigItemFrame.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
 					Komaru.PlayAnimate(UIStroke,SlowyTween,{
 						Transparency = 0.25
 					})
 				end)));
 
-				table.insert(ConfigLib.Signals , ConfigItemFrame.MouseLeave:Connect(function()
+				table.insert(ConfigLib.Signals , ConfigItemFrame.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
 					Komaru.PlayAnimate(UIStroke,SlowyTween,{
 						Transparency = 0.500
 					})
@@ -5703,28 +5689,28 @@ function Komaru:CreateWindow(Config)
 				table.insert(ConfigLib.Signals , signal);
 				table.insert(ConfigLib.Signals , load_signal);
 
-				table.insert(ConfigLib.Signals , deleter.MouseEnter:Connect(function()
+				table.insert(ConfigLib.Signals , deleter.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
 					Komaru.PlayAnimate(Icon,SlowyTween,{
 						TextTransparency = 0.2,
 						TextColor3 = Color3.fromRGB(223, 125, 125)
 					})
 				end)))
 
-				table.insert(ConfigLib.Signals , deleter.MouseLeave:Connect(function()
+				table.insert(ConfigLib.Signals , deleter.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
 					Komaru.PlayAnimate(Icon,SlowyTween,{
 						TextTransparency = 0.400,
 						TextColor3 = Color3.fromRGB(223, 223, 223)
 					})
 				end)))
 
-				table.insert(ConfigLib.Signals , LoadConfig.MouseEnter:Connect(function()
+				table.insert(ConfigLib.Signals , LoadConfig.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
 					Komaru.PlayAnimate(Icon_2,SlowyTween,{
 						TextTransparency = 0.2,
 						TextColor3 = Komaru.AccentColor
 					})
 				end)))
 
-				table.insert(ConfigLib.Signals , LoadConfig.MouseLeave:Connect(function()
+				table.insert(ConfigLib.Signals , LoadConfig.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
 					Komaru.PlayAnimate(Icon_2,SlowyTween,{
 						TextTransparency = 0.400,
 						TextColor3 = Color3.fromRGB(223, 223, 223)
@@ -5775,13 +5761,13 @@ function Komaru:CreateWindow(Config)
 			end;
 		end);
 
-		Komaru:AddSignal(hover_write.MouseEnter:Connect(function()
+		Komaru:AddSignal(hover_write.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
 			Komaru.PlayAnimate(ConfigIcon,SlowyTween,{
 				TextTransparency = 0.1
 			})
 		end)));
 
-		Komaru:AddSignal(hover_write.MouseLeave:Connect(function()
+		Komaru:AddSignal(hover_write.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
 			Komaru.PlayAnimate(ConfigIcon,SlowyTween,{
 				TextTransparency = 0.25
 			})
@@ -5822,7 +5808,7 @@ function Komaru:CreateWindow(Config)
 
 		ConfigLib:RefreshConfig();
 
-		OpenButton.MouseButton1Click:Connect(function()
+		OpenButton.MouseButton1Click:Connect(LPH_NO_VIRTUALIZE(function()
 			if ConfigLib.UnsafeThread then
 				ConfigLib.UnsafeThread:Disconnect();
 				ConfigLib.UnsafeThread = nil;
@@ -5849,10 +5835,16 @@ function Komaru:CreateWindow(Config)
 
 	Window:_InitConfig();
 
+	Komaru:AddSignal(Window.Signal:Connect(LPH_NO_VIRTUALIZE(function(value)
+		if not value then
+			ConfigSignal:SetValue(false);
+			UserSettings.Signal:SetValue(false);
+		end;
+	end)));
+
 	local UserSettings = Komaru:CreateOptionWindow(BottomFrame , BottomFrame.ZIndex + 13);
-	Window.UserSettings = UserSettings;
 	local reciveSignal;
-	Komaru:CreateInput(BottomFrame , function()
+	Komaru:CreateInput(BottomFrame , LPH_NO_VIRTUALIZE(function()
 		if reciveSignal then
 			reciveSignal:Disconnect();
 			reciveSignal = nil;	
@@ -5912,7 +5904,7 @@ function Komaru:CreateWindow(Config)
 
 	Window:SetAccount();
 
-	Komaru:AddSignal(UserInputService.InputBegan:Connect(function(value,ISTYPING)
+	Komaru:AddSignal(UserInputService.InputBegan:Connect(LPH_NO_VIRTUALIZE(function(value,ISTYPING)
 		if value.KeyCode == Window.Keybind or value.KeyCode.Name == Window.Keybind then
 			if not ISTYPING then
 				Window:ToggleInterface()
@@ -5922,15 +5914,6 @@ function Komaru:CreateWindow(Config)
 
 	function Window:ToggleInterface()
 		Window.Signal:SetValue(not Window.Signal:GetValue());
-
-		if not Window.Signal:GetValue() then
-			if Window.ConfigSignal then
-				Window.ConfigSignal:SetValue(false);
-			end;
-			if Window.UserSettings and Window.UserSettings.Signal then
-				Window.UserSettings.Signal:SetValue(false);
-			end;
-		end;
 
 		if Window.__3DRender then
 			Window.Load3DBlock();
@@ -5975,7 +5958,7 @@ function Komaru:CreateWindow(Config)
 		empty_space.Parent = Watermark;
 		empty_space.LayoutOrder = 5;
 
-		Watermark:GetPropertyChangedSignal('BackgroundTransparency'):Connect(function()
+		Watermark:GetPropertyChangedSignal('BackgroundTransparency'):Connect(LPH_NO_VIRTUALIZE(function()
 			if Watermark.BackgroundTransparency > 0.9 then
 				Watermark.Visible = false;
 				Watermark.Parent = nil;
@@ -5985,7 +5968,7 @@ function Komaru:CreateWindow(Config)
 			end;
 		end));
 
-		UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+		UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(LPH_NO_VIRTUALIZE(function()
 			Komaru.PlayAnimate(Watermark , SlowyTween , {
 				Size = UDim2.new(0, UIListLayout.AbsoluteContentSize.X + 5, 0, 30)
 			})
@@ -6072,7 +6055,7 @@ function Komaru:CreateWindow(Config)
 			Icon.TextTransparency = 0.250
 			Icon.TextWrapped = true
 
-			InnerBlock.Update = function(value)
+			InnerBlock.Update = LPH_NO_VIRTUALIZE(function(value)
 				local size = TextService:GetTextSize(Content.Text , Content.TextSize,Content.Font,Vector2.new(math.huge,math.huge))
 
 				if InnerBlock.Visible then
@@ -6100,7 +6083,7 @@ function Komaru:CreateWindow(Config)
 				InnerBlock.Update();
 			end;
 
-			InnerBlock.SetRender = function(value)
+			InnerBlock.SetRender = LPH_NO_VIRTUALIZE(function(value)
 				if value and InnerBlock.Visible then
 					Komaru.PlayAnimate(Content,SlowyTween , {
 						TextTransparency = 0.200
@@ -6207,7 +6190,7 @@ function Komaru:CreateNotification()
 		NotifyFrame.Name = Komaru.RandomString();
 		NotifyFrame.Parent = ContainerFrame
 		NotifyFrame.AnchorPoint = Vector2.new(1, 0)
-		NotifyFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+		NotifyFrame.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
 		NotifyFrame.BackgroundTransparency = 0.075
 		NotifyFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		NotifyFrame.BorderSizePixel = 0
@@ -6284,7 +6267,7 @@ function Komaru:CreateNotification()
 
 		ContainerFrame.Size = UDim2.new(0, 0, 0, 65)
 
-		task.delay(Config.Duration or 5 , function()
+		task.delay(Config.Duration or 5 , LPH_NO_VIRTUALIZE(function()
 
 			if Komaru.__WatermarkCache then
 				Komaru.PlayAnimate(Notification,SlowyTween , {
@@ -6370,7 +6353,7 @@ function Komaru:CreateLogger()
 		LogFrame.Name = Komaru.RandomString();
 		LogFrame.Parent = Log
 		LogFrame.AnchorPoint = Vector2.new(0.5, 0)
-		LogFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+		LogFrame.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
 		LogFrame.BackgroundTransparency =  1--0.075
 		LogFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		LogFrame.BorderSizePixel = 0
@@ -6439,7 +6422,7 @@ function Komaru:CreateLogger()
 			BackgroundTransparency =  0.075
 		});
 
-		task.delay(0.15,function()
+		task.delay(0.15,LPH_NO_VIRTUALIZE(function()
 			Shadow:Render(true);
 
 			Komaru.PlayAnimate(UIStroke , SlowyTween , {
@@ -6551,7 +6534,7 @@ function Komaru:CreateIndicator()
 		IndicatorItem.ZIndex = 16
 		IndicatorItem.Visible = false;
 
-		IndicatorItem:GetPropertyChangedSignal('BackgroundTransparency'):Connect(function()
+		IndicatorItem:GetPropertyChangedSignal('BackgroundTransparency'):Connect(LPH_NO_VIRTUALIZE(function()
 			if IndicatorItem.BackgroundTransparency > 0.9 then
 				IndicatorItem.Parent = nil;
 				IndicatorItem.Visible = false;
@@ -6616,7 +6599,7 @@ function Komaru:CreateIndicator()
 		Content.TextTransparency = 1
 		Content.TextXAlignment = Enum.TextXAlignment.Left
 
-		Indicator.Update = function()
+		Indicator.Update = LPH_NO_VIRTUALIZE(function()
 			local text = TextService:GetTextSize(Content.Text,Content.TextSize , Content.Font , Vector2.new(math.huge,math.huge));
 
 			Komaru.PlayAnimate(IndicatorItem , SlowyTween , {
@@ -6624,7 +6607,7 @@ function Komaru:CreateIndicator()
 			})
 		end);
 
-		Indicator.SetRender = function(self , value)
+		Indicator.SetRender = LPH_NO_VIRTUALIZE(function(self , value)
 			Indicator.Visible = value;
 
 			if value then
