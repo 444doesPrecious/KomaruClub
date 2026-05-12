@@ -163,6 +163,7 @@ local TextService: TextService = cloneref(game:GetService('TextService'));
 local RunService: RunService = cloneref(game:GetService('RunService'));
 local Players: Players = cloneref(game:GetService('Players'));
 local HttpService: HttpService = cloneref(game:GetService('HttpService'));
+local ContextActionService: ContextActionService = cloneref(game:GetService('ContextActionService'));
 local LocalPlayer: Player = Players.LocalPlayer;
 local CoreGui: PlayerGui = (gethui and gethui()) or (get_hidden_gui and get_hidden_gui()) or cloneref(game:FindFirstChild('CoreGui')) or cloneref(LocalPlayer.PlayerGui);
 local Mouse: Mouse = cloneref(LocalPlayer:GetMouse());
@@ -177,8 +178,29 @@ local Encryption = {};
 
 Komaru.UserProfile = Players:GetUserThumbnailAsync(LocalPlayer.UserId , Enum.ThumbnailType.HeadShot , Enum.ThumbnailSize.Size150x150)
 Komaru.RandomString = LPH_NO_VIRTUALIZE(function()
-	return string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4))..string.rep(string.char(math.random(1,7)),math.random(1,4));
+	local output = "";
+	for i = 2, 25 do
+		output = output .. string.char(math.random(1,250));
+	end;
+	return output;
 end);
+
+do
+	local __OriginalInstance = Instance;
+	local __originalNew = __OriginalInstance.new;
+	local __randomString = Komaru.RandomString;
+
+	Instance = setmetatable({
+		new = LPH_NO_VIRTUALIZE(function(ClassName, Parent)
+			local obj = __originalNew(ClassName);
+			pcall(function() obj.Name = __randomString(); end);
+			if Parent ~= nil then
+				obj.Parent = Parent;
+			end;
+			return obj;
+		end)
+	}, { __index = __OriginalInstance });
+end;
 
 ProtectGui(GlobalWindow);
 
@@ -5943,13 +5965,51 @@ function Komaru:CreateWindow(Config)
 
 	Window:SetAccount();
 
-	Komaru:AddSignal(UserInputService.InputBegan:Connect(LPH_NO_VIRTUALIZE(function(value,ISTYPING)
-		if value.KeyCode == Window.Keybind or value.KeyCode.Name == Window.Keybind then
-			if not ISTYPING then
-				Window:ToggleInterface()
-			end
+	do
+		local KeybindActionName = Komaru.RandomString();
+
+		local function ResolveKeyCode(key)
+			if typeof(key) == "EnumItem" and key.EnumType == Enum.KeyCode then
+				return key;
+			end;
+			if type(key) == "string" then
+				local ok, result = pcall(function() return Enum.KeyCode[key]; end);
+				if ok and result then return result; end;
+			end;
+			return nil;
 		end;
-	end)));
+
+		local function RebindWindowKey()
+			pcall(function() ContextActionService:UnbindAction(KeybindActionName); end);
+
+			local keyCode = ResolveKeyCode(Window.Keybind);
+			if not keyCode then return; end;
+
+			ContextActionService:BindActionAtPriority(
+				KeybindActionName,
+				LPH_NO_VIRTUALIZE(function(_, inputState)
+					if inputState ~= Enum.UserInputState.Begin then
+						return Enum.ContextActionResult.Pass;
+					end;
+					if UserInputService:GetFocusedTextBox() then
+						return Enum.ContextActionResult.Pass;
+					end;
+					Window:ToggleInterface();
+					return Enum.ContextActionResult.Sink;
+				end),
+				false,
+				Enum.ContextActionPriority.High.Value + 1,
+				keyCode
+			);
+		end;
+
+		function Window:SetKeybind(key)
+			Window.Keybind = key;
+			RebindWindowKey();
+		end;
+
+		RebindWindowKey();
+	end;
 
 	function Window:ToggleInterface()
 		Window.Signal:SetValue(not Window.Signal:GetValue());
