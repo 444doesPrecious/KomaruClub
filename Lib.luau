@@ -198,8 +198,8 @@ Komaru.Scales = {
 Komaru.IconColor = Color3.fromRGB(255, 255, 255);
 Komaru.ScreenGui = GlobalWindow;
 Komaru.Flags = {};
-Komaru.AccentColor = Color3.fromRGB(78, 127, 252);
-Komaru.MainColor = Color3.fromRGB(8, 8, 13);
+Komaru.AccentColor = Color3.fromRGB(252, 78, 78);
+Komaru.MainColor = Color3.fromRGB(8, 8, 8);
 Komaru.RegisiteryColor = {};
 Komaru.NameRegisitry = {};
 Komaru.IsMosueOverOtherFrame = false;
@@ -207,7 +207,7 @@ Komaru.GlobalLogo = "rbxassetid://125898441467342";
 Komaru.ImageColorMapping = "rbxassetid://4155801252";
 
 if getcustomasset then
-	local link = "https://github.com/444doesPrecious/KomaruClub/blob/main/%s?raw=true";
+	local link = "https://raw.githubusercontent.com/444doesPrecious/KomaruClub/main/%s";
 	local dir = 'KomaruClubAssets';
 
 	if not isfolder(dir) then
@@ -216,7 +216,7 @@ if getcustomasset then
 
 	pcall(function()
 		if not isfile(dir..'/'..'logooo.png') then
-			local byte = game:HttpGet(string.format(link,'logooo.png'));
+			local byte = game:HttpGet(string.format(link,'komaru.png'));
 
 			writefile(dir..'/'..'logooo.png' , byte);
 			task.wait();
