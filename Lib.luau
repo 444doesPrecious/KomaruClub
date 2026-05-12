@@ -208,22 +208,22 @@ Komaru.ImageColorMapping = "rbxassetid://4155801252";
 
 if getcustomasset then
 	local link = "https://github.com/444doesPrecious/KomaruClub/blob/main/%s?raw=true";
-	local dir = 'NLAssets';
+	local dir = 'KomaruClubAssets';
 
 	if not isfolder(dir) then
 		makefolder(dir);
 	end;
 
 	pcall(function()
-		if not isfile(dir..'/'..'komaru.png') then
+		if not isfile(dir..'/'..'logooo.png') then
 			local byte = game:HttpGet(string.format(link,'komaru.png'));
 
-			writefile(dir..'/'..'komaru.png' , byte);
+			writefile(dir..'/'..'logooo.png' , byte);
 			task.wait();
 		end;
 
-		if isfile(dir..'/'..'komaru.png') then
-			Komaru.GlobalLogo = getcustomasset(dir..'/'..'komaru.png')
+		if isfile(dir..'/'..'logooo.png') then
+			Komaru.GlobalLogo = getcustomasset(dir..'/'..'logooo.png')
 		end;
 	end);
 
