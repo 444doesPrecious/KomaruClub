@@ -1266,7 +1266,7 @@ function Komaru:CreateOptionWindow(Frame: Frame , Zindex)
 	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
 	UIStroke.Transparency = 0.650
-	UIStroke.Color = Color3.fromRGB(45, 45, 58)
+	UIStroke.Color = Color3.fromRGB(45, 45, 45)
 	UIStroke.Parent = OptionHandler
 
 	Komaru:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(LPH_NO_VIRTUALIZE(function()
@@ -1412,7 +1412,7 @@ function Komaru:CreateColorPicker(HandleFrame: Frame)
 	UICorner.Parent = ColorPickerHandler
 
 	UIStroke.Transparency = 0.650
-	UIStroke.Color = Color3.fromRGB(45, 45, 58)
+	UIStroke.Color = Color3.fromRGB(45, 45, 45)
 	UIStroke.Parent = ColorPickerHandler
 
 	SaViMap.Name = Komaru.RandomString();
@@ -1482,7 +1482,7 @@ function Komaru:CreateColorPicker(HandleFrame: Frame)
 
 	RGBLabel.Name = Komaru.RandomString();
 	RGBLabel.Parent = ColorPickerHandler
-	RGBLabel.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
+	RGBLabel.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
 	RGBLabel.BackgroundTransparency = 0.750
 	RGBLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	RGBLabel.BorderSizePixel = 0
@@ -1902,7 +1902,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		Slider.Name = Komaru.RandomString();
 		Slider.Parent = Handler
-		Slider.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
+		Slider.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
 		Slider.BackgroundTransparency = 1.000
 		Slider.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Slider.BorderSizePixel = 0
@@ -1917,7 +1917,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		ValueFrame.Name = Komaru.RandomString();
 		ValueFrame.Parent = Slider
 		ValueFrame.AnchorPoint = Vector2.new(1, 0)
-		ValueFrame.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
+		ValueFrame.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
 		ValueFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		ValueFrame.BorderSizePixel = 0
 		ValueFrame.ClipsDescendants = true
@@ -1929,7 +1929,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		UICorner_2.Parent = ValueFrame
 
 		UIStroke.Transparency = 0.650
-		UIStroke.Color = Color3.fromRGB(45, 45, 58)
+		UIStroke.Color = Color3.fromRGB(45, 45, 45)
 		UIStroke.Parent = ValueFrame
 
 		ValueLabel.Name = Komaru.RandomString();
@@ -1963,7 +1963,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		SlideFrame.Name = Komaru.RandomString();
 		SlideFrame.Parent = SlideMain
 		SlideFrame.AnchorPoint = Vector2.new(0, 0.5)
-		SlideFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 36)
+		SlideFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 		SlideFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		SlideFrame.BorderSizePixel = 0
 		SlideFrame.Position = UDim2.new(0, 0, 0.5, 0)
@@ -2180,7 +2180,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		Option.Name = Komaru.RandomString();
 		Option.Parent = Handler
-		Option.BackgroundColor3 = Color3.fromRGB(39, 39, 49)
+		Option.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
 		Option.BackgroundTransparency = 1.000
 		Option.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Option.BorderSizePixel = 0
@@ -2309,7 +2309,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		UICorner.Parent = ColorPicker
 
 		UIStroke.Transparency = 0.650
-		UIStroke.Color = Color3.fromRGB(45, 45, 58)
+		UIStroke.Color = Color3.fromRGB(45, 45, 45)
 		UIStroke.Parent = ColorPicker
 
 		ImageLabel.Parent = ColorPicker
@@ -2422,7 +2422,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		Keybind.Name = Komaru.RandomString();
 		Keybind.Parent = Handler
-		Keybind.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
+		Keybind.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
 		Keybind.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Keybind.BorderSizePixel = 0
 		Keybind.ClipsDescendants = true
@@ -2433,7 +2433,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		UICorner.Parent = Keybind
 
 		UIStroke.Transparency = 0.650
-		UIStroke.Color = Color3.fromRGB(45, 45, 58)
+		UIStroke.Color = Color3.fromRGB(45, 45, 45)
 		UIStroke.Parent = Keybind
 
 		ValueLabel.Name = Komaru.RandomString();
@@ -2576,7 +2576,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		TextInput.Name = Komaru.RandomString();
 		TextInput.Parent = Handler
-		TextInput.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
+		TextInput.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
 		TextInput.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		TextInput.BorderSizePixel = 0
 		TextInput.ClipsDescendants = true
@@ -2587,7 +2587,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		UICorner.Parent = TextInput
 
 		UIStroke.Transparency = 0.650
-		UIStroke.Color = Color3.fromRGB(45, 45, 58)
+		UIStroke.Color = Color3.fromRGB(45, 45, 45)
 		UIStroke.Parent = TextInput
 
 		TextBox.Parent = TextInput
@@ -2690,7 +2690,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		Dropdown.Name = Komaru.RandomString();
 		Dropdown.Parent = Handler
-		Dropdown.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
+		Dropdown.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
 		Dropdown.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Dropdown.BorderSizePixel = 0
 		Dropdown.ClipsDescendants = true
@@ -2718,7 +2718,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		UICorner.Parent = Dropdown
 
 		UIStroke.Transparency = 0.650
-		UIStroke.Color = Color3.fromRGB(45, 45, 58)
+		UIStroke.Color = Color3.fromRGB(45, 45, 45)
 		UIStroke.Parent = Dropdown
 
 		BasedLabel.Name = Komaru.RandomString();
@@ -2844,7 +2844,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			UICorner.Parent = DropdownHandler
 
 			UIStroke.Transparency = 0.650
-			UIStroke.Color = Color3.fromRGB(45, 45, 58)
+			UIStroke.Color = Color3.fromRGB(45, 45, 45)
 			UIStroke.Parent = DropdownHandler
 
 			DropdownScrollFrame.Name = Komaru.RandomString();
@@ -2973,7 +2973,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 				ItemFrame.Name = Komaru.RandomString();
 				ItemFrame.Parent = DropdownLib.RootItem
-				ItemFrame.BackgroundColor3 = Color3.fromRGB(29, 29, 38)
+				ItemFrame.BackgroundColor3 = Color3.fromRGB(29, 29, 29)
 				ItemFrame.BackgroundTransparency = 1.000
 				ItemFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 				ItemFrame.BorderSizePixel = 0
@@ -3264,7 +3264,7 @@ function Komaru:CreateToolTips(Container: Frame , Name: string , Content: string
 	UICorner.Parent = Tooltips
 
 	UIStroke.Transparency = 0.650
-	UIStroke.Color = Color3.fromRGB(45, 45, 58)
+	UIStroke.Color = Color3.fromRGB(45, 45, 45)
 	UIStroke.Parent = Tooltips
 
 	TooltipName.Name = Komaru.RandomString();
@@ -3439,7 +3439,7 @@ function Komaru:RegisiterItem(Frame: Frame , Signel)
 		LineFrame.Name = Komaru.RandomString();
 		LineFrame.Parent = BasedFrame
 		LineFrame.AnchorPoint = Vector2.new(0.5, 1)
-		LineFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 58)
+		LineFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 		LineFrame.BackgroundTransparency = 0.650
 		LineFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		LineFrame.BorderSizePixel = 0
@@ -3606,7 +3606,7 @@ function Komaru:RegisiterItem(Frame: Frame , Signel)
 		LineFrame.Name = Komaru.RandomString();
 		LineFrame.Parent = ButtonFrame
 		LineFrame.AnchorPoint = Vector2.new(0.5, 1)
-		LineFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 58)
+		LineFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 		LineFrame.BackgroundTransparency = 0.650
 		LineFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		LineFrame.BorderSizePixel = 0
@@ -3740,7 +3740,7 @@ function Komaru:RegisiterItem(Frame: Frame , Signel)
 		LineFrame.Name = Komaru.RandomString();
 		LineFrame.Parent = UserFrame
 		LineFrame.AnchorPoint = Vector2.new(0.5, 1)
-		LineFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 58)
+		LineFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 		LineFrame.BackgroundTransparency = 0.650
 		LineFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		LineFrame.BorderSizePixel = 0
@@ -4228,7 +4228,7 @@ function Komaru:CreateWindow(Config)
 	LineFrame.Name = Komaru.RandomString();
 	LineFrame.Parent = HeadFrame
 	LineFrame.AnchorPoint = Vector2.new(0.5, 1)
-	LineFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 58)
+	LineFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 	LineFrame.BackgroundTransparency = 0.650
 	LineFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	LineFrame.BorderSizePixel = 0
@@ -4319,7 +4319,7 @@ function Komaru:CreateWindow(Config)
 	LineFrame_2.Name = Komaru.RandomString();
 	LineFrame_2.Parent = BottomFrame
 	LineFrame_2.AnchorPoint = Vector2.new(0.5, 0)
-	LineFrame_2.BackgroundColor3 = Color3.fromRGB(45, 45, 58)
+	LineFrame_2.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 	LineFrame_2.BackgroundTransparency = 0.650
 	LineFrame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	LineFrame_2.BorderSizePixel = 0
@@ -4367,7 +4367,7 @@ function Komaru:CreateWindow(Config)
 	RightMenuFrame.ZIndex = 8
 
 	UIStroke.Transparency = 0.650
-	UIStroke.Color = Color3.fromRGB(45, 45, 58)
+	UIStroke.Color = Color3.fromRGB(45, 45, 45)
 	UIStroke.Parent = RightMenuFrame
 
 	UICorner_4.CornerRadius = UDim.new(0, 13)
@@ -4385,7 +4385,7 @@ function Komaru:CreateWindow(Config)
 	LineFrame_3.Name = Komaru.RandomString();
 	LineFrame_3.Parent = RightHeader
 	LineFrame_3.AnchorPoint = Vector2.new(0.5, 1)
-	LineFrame_3.BackgroundColor3 = Color3.fromRGB(45, 45, 58)
+	LineFrame_3.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 	LineFrame_3.BackgroundTransparency = 0.650
 	LineFrame_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	LineFrame_3.BorderSizePixel = 0
@@ -4405,7 +4405,7 @@ function Komaru:CreateWindow(Config)
 	ConfigFrame.ZIndex = 9
 
 	UIStroke_2.Transparency = 0.650
-	UIStroke_2.Color = Color3.fromRGB(45, 45, 58)
+	UIStroke_2.Color = Color3.fromRGB(45, 45, 45)
 	UIStroke_2.Parent = ConfigFrame
 
 	UICorner_5.CornerRadius = UDim.new(0, 4)
@@ -4430,7 +4430,7 @@ function Komaru:CreateWindow(Config)
 
 	LineFrame_4.Name = Komaru.RandomString();
 	LineFrame_4.Parent = ConfigFrame
-	LineFrame_4.BackgroundColor3 = Color3.fromRGB(45, 45, 58)
+	LineFrame_4.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 	LineFrame_4.BackgroundTransparency = 0.650
 	LineFrame_4.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	LineFrame_4.BorderSizePixel = 0
@@ -5022,7 +5022,7 @@ function Komaru:CreateWindow(Config)
 			SectionHandler.ZIndex = 9
 
 			UIStroke.Transparency = 0.650
-			UIStroke.Color = Color3.fromRGB(45, 45, 58)
+			UIStroke.Color = Color3.fromRGB(45, 45, 45)
 			UIStroke.Parent = SectionHandler
 
 			UICorner.CornerRadius = UDim.new(0, 10)
@@ -5225,7 +5225,7 @@ function Komaru:CreateWindow(Config)
 		UIListLayout.Padding = UDim.new(0, 4)
 
 		UIStroke.Transparency = 0.650
-		UIStroke.Color = Color3.fromRGB(45, 45, 58)
+		UIStroke.Color = Color3.fromRGB(45, 45, 45)
 		UIStroke.Parent = ConfigMenu
 
 		InputFrame.Name = Komaru.RandomString();
@@ -5256,7 +5256,7 @@ function Komaru:CreateWindow(Config)
 		LineFrame.Name = Komaru.RandomString();
 		LineFrame.Parent = InputFrame
 		LineFrame.AnchorPoint = Vector2.new(0.5, 1)
-		LineFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 58)
+		LineFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 		LineFrame.BackgroundTransparency = 0.650
 		LineFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		LineFrame.BorderSizePixel = 0
@@ -5297,7 +5297,7 @@ function Komaru:CreateWindow(Config)
 
 		TextInput.Name = Komaru.RandomString();
 		TextInput.Parent = BasedHandler
-		TextInput.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
+		TextInput.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
 		TextInput.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		TextInput.BorderSizePixel = 0
 		TextInput.ClipsDescendants = true
@@ -5308,7 +5308,7 @@ function Komaru:CreateWindow(Config)
 		UICorner_2.Parent = TextInput
 
 		UIStroke_2.Transparency = 0.650
-		UIStroke_2.Color = Color3.fromRGB(45, 45, 58)
+		UIStroke_2.Color = Color3.fromRGB(45, 45, 45)
 		UIStroke_2.Parent = TextInput
 
 		TextBox.Parent = TextInput
@@ -5331,7 +5331,7 @@ function Komaru:CreateWindow(Config)
 
 		LoadConfig.Name = Komaru.RandomString();
 		LoadConfig.Parent = BasedHandler
-		LoadConfig.BackgroundColor3 = Color3.fromRGB(39, 39, 49)
+		LoadConfig.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
 		LoadConfig.BackgroundTransparency = 1.000
 		LoadConfig.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		LoadConfig.BorderSizePixel = 0
@@ -5384,6 +5384,7 @@ function Komaru:CreateWindow(Config)
 		UICorner.Parent = OpenButton
 
 		ConfigLib.SetRender(false);
+		ConfigLib.Signal = ConfigSignal;
 		ConfigSignal:Connect(ConfigLib.SetRender);
 		ConfigLib.UnsafeThread = nil;
 		ConfigLib.SelectedConfig = "Default";
@@ -5517,7 +5518,7 @@ function Komaru:CreateWindow(Config)
 
 				DeleteConfig.Name = Komaru.RandomString();
 				DeleteConfig.Parent = BasedHandler
-				DeleteConfig.BackgroundColor3 = Color3.fromRGB(39, 39, 49)
+				DeleteConfig.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
 				DeleteConfig.BackgroundTransparency = 1.000
 				DeleteConfig.BorderColor3 = Color3.fromRGB(0, 0, 0)
 				DeleteConfig.BorderSizePixel = 0
@@ -5547,7 +5548,7 @@ function Komaru:CreateWindow(Config)
 
 				LoadConfig.Name = Komaru.RandomString();
 				LoadConfig.Parent = BasedHandler
-				LoadConfig.BackgroundColor3 = Color3.fromRGB(39, 39, 49)
+				LoadConfig.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
 				LoadConfig.BackgroundTransparency = 1.000
 				LoadConfig.BorderColor3 = Color3.fromRGB(0, 0, 0)
 				LoadConfig.BorderSizePixel = 0
@@ -5595,7 +5596,7 @@ function Komaru:CreateWindow(Config)
 				BasedLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 				UIStroke.Transparency = 0.500
-				UIStroke.Color = Color3.fromRGB(45, 45, 58)
+				UIStroke.Color = Color3.fromRGB(45, 45, 45)
 				UIStroke.Parent = ConfigItemFrame
 
 				local Render = LPH_NO_VIRTUALIZE(function(rst)
@@ -5843,8 +5844,12 @@ function Komaru:CreateWindow(Config)
 
 	Komaru:AddSignal(Window.Signal:Connect(LPH_NO_VIRTUALIZE(function(value)
 		if not value then
-			ConfigSignal:SetValue(false);
-			UserSettings.Signal:SetValue(false);
+			if ConfigLib and ConfigLib.Signal then
+				ConfigLib.Signal:SetValue(false);
+			end
+			if UserSettings and UserSettings.Signal then
+				UserSettings.Signal:SetValue(false);
+			end
 		end;
 	end)));
 
@@ -6209,7 +6214,7 @@ function Komaru:CreateNotification()
 		UICorner.Parent = NotifyFrame
 
 		UIStroke.Transparency = 0.650
-		UIStroke.Color = Color3.fromRGB(45, 45, 58)
+		UIStroke.Color = Color3.fromRGB(45, 45, 45)
 		UIStroke.Parent = NotifyFrame
 
 		LogoImage.Name = Komaru.RandomString();
@@ -6372,7 +6377,7 @@ function Komaru:CreateLogger()
 		UICorner.Parent = LogFrame
 
 		UIStroke.Transparency = 1--0.650
-		UIStroke.Color = Color3.fromRGB(45, 45, 58)
+		UIStroke.Color = Color3.fromRGB(45, 45, 45)
 		UIStroke.Parent = LogFrame
 
 		LogContent.Name = Komaru.RandomString();
