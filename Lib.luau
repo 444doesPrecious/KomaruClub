@@ -5850,7 +5850,8 @@ function Komaru:CreateWindow(Config)
 		return ConfigLib;
 	end;
 
-	Window:_InitConfig();
+	local ConfigLib = Window:_InitConfig();
+	local UserSettings = Komaru:CreateOptionWindow(BottomFrame , BottomFrame.ZIndex + 13);
 
 	local function closeAllSubmenus()
 		if ConfigLib and ConfigLib.Signal then
@@ -5862,10 +5863,10 @@ function Komaru:CreateWindow(Config)
 		for _, item in ipairs(Komaru.OpenableRegistry or {}) do
 			if item.OpenSignal then
 				item.OpenSignal:SetValue(false)
-			elseif item.SetRender then
-				item.SetRender(false)
 			elseif item.Signal and item.Signal.SetValue then
 				item.Signal:SetValue(false)
+			elseif item.SetRender then
+				item.SetRender(false)
 			end
 		end
 		for _, tooltip in ipairs(Komaru.TooltipRegistry or {}) do
@@ -5879,7 +5880,6 @@ function Komaru:CreateWindow(Config)
 		end
 	end)));
 
-	local UserSettings = Komaru:CreateOptionWindow(BottomFrame , BottomFrame.ZIndex + 13);
 	table.insert(Komaru.OpenableRegistry, ConfigLib)
 	table.insert(Komaru.OpenableRegistry, UserSettings)
 	local reciveSignal;
