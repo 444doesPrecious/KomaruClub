@@ -216,7 +216,7 @@ if getcustomasset then
 
 	pcall(function()
 		if not isfile(dir..'/'..'logooo.png') then
-			local byte = game:HttpGet(string.format(link,'komaru.png'));
+			local byte = game:HttpGet(string.format(link,'logooo.png'));
 
 			writefile(dir..'/'..'logooo.png' , byte);
 			task.wait();
@@ -3837,10 +3837,10 @@ end;
 function Komaru:CreateWindow(Config)
 	Config = Komaru:ProcessParams(Config , {
 		Logo = Komaru.GlobalLogo,
-		Name = "Neverlose",
-		Content = "Counter-Strike 2",
+		Name = "Komaru.Club",
+		Content = "Blox Fruits",
 		Size = UDim2.new(0, 640, 0, 480),
-		ConfigFolder = "NeverLoseConfigs",
+		ConfigFolder = "KomaruClubConfigs",
 		Enable3DRenderer = false,
 		Keybind = "F1"
 	});
