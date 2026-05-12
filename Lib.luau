@@ -3590,7 +3590,7 @@ function Komaru:RegisiterItem(Frame: Frame , Signel)
 
 		ButtonFrame.Name = Komaru.RandomString();
 		ButtonFrame.Parent = Frame
-		ButtonFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 33)
+		ButtonFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 		ButtonFrame.BackgroundTransparency = 1.000
 		ButtonFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		ButtonFrame.BorderSizePixel = 0
@@ -5864,7 +5864,7 @@ function Komaru:CreateWindow(Config)
 				item.OpenSignal:SetValue(false)
 			elseif item.SetRender then
 				item.SetRender(false)
-			elseif item.Signal then
+			elseif item.Signal and item.Signal.SetValue then
 				item.Signal:SetValue(false)
 			end
 		end
@@ -5879,10 +5879,9 @@ function Komaru:CreateWindow(Config)
 		end
 	end)));
 
+	local UserSettings = Komaru:CreateOptionWindow(BottomFrame , BottomFrame.ZIndex + 13);
 	table.insert(Komaru.OpenableRegistry, ConfigLib)
 	table.insert(Komaru.OpenableRegistry, UserSettings)
-
-	local UserSettings = Komaru:CreateOptionWindow(BottomFrame , BottomFrame.ZIndex + 13);
 	local reciveSignal;
 	Komaru:CreateInput(BottomFrame , LPH_NO_VIRTUALIZE(function()
 		if reciveSignal then
