@@ -203,7 +203,7 @@ Komaru.MainColor = Color3.fromRGB(8, 8, 13);
 Komaru.RegisiteryColor = {};
 Komaru.NameRegisitry = {};
 Komaru.IsMosueOverOtherFrame = false;
-Komaru.GlobalLogo = "rbxassetid://107309277294994";
+Komaru.GlobalLogo = "rbxassetid://125898441467342";
 Komaru.ImageColorMapping = "rbxassetid://4155801252";
 
 if getcustomasset then
