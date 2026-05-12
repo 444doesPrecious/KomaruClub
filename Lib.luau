@@ -207,7 +207,7 @@ Komaru.GlobalLogo = "rbxassetid://125898441467342";
 Komaru.ImageColorMapping = "rbxassetid://4155801252";
 
 if getcustomasset then
-	local link = "https://raw.githubusercontent.com/444doesPrecious/KomaruClub/main/%s";
+	local link = "https://raw.githubusercontent.com/444doesPrecious/KomaruClub/refs/heads/main/%s";
 	local dir = 'KomaruClubAssets';
 
 	if not isfolder(dir) then
