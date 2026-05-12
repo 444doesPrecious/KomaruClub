@@ -5874,8 +5874,8 @@ function Komaru:CreateWindow(Config)
 	Komaru:AddSignal(Window.Signal:Connect(LPH_NO_VIRTUALIZE(function(value)
 		if not value then
 			closeAllSubmenus();
-		end;
-	end))));
+		end
+	end)));
 
 	local UserSettings = Komaru:CreateOptionWindow(BottomFrame , BottomFrame.ZIndex + 13);
 	local reciveSignal;
