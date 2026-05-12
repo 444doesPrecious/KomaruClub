@@ -1249,7 +1249,7 @@ function Komaru:CreateOptionWindow(Frame: Frame , Zindex)
 	OptionHandler.Name = Komaru.RandomString();
 	OptionHandler.Parent = Komaru.ScreenGui
 	OptionHandler.AnchorPoint = Vector2.new(0, 0)
-	OptionHandler.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+	OptionHandler.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 	OptionHandler.BackgroundTransparency = 0.035
 	OptionHandler.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	OptionHandler.BorderSizePixel = 0
@@ -1384,7 +1384,7 @@ function Komaru:CreateColorPicker(HandleFrame: Frame)
 	ColorPickerHandler.Name = Komaru.RandomString();
 	ColorPickerHandler.Parent = Komaru.ScreenGui
 	ColorPickerHandler.AnchorPoint = Vector2.new(0, 0)
-	ColorPickerHandler.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+	ColorPickerHandler.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 	ColorPickerHandler.BackgroundTransparency = 0.035
 	ColorPickerHandler.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	ColorPickerHandler.BorderSizePixel = 0
@@ -1482,7 +1482,7 @@ function Komaru:CreateColorPicker(HandleFrame: Frame)
 
 	RGBLabel.Name = Komaru.RandomString();
 	RGBLabel.Parent = ColorPickerHandler
-	RGBLabel.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
+	RGBLabel.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
 	RGBLabel.BackgroundTransparency = 0.750
 	RGBLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	RGBLabel.BorderSizePixel = 0
@@ -1902,7 +1902,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		Slider.Name = Komaru.RandomString();
 		Slider.Parent = Handler
-		Slider.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
+		Slider.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
 		Slider.BackgroundTransparency = 1.000
 		Slider.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Slider.BorderSizePixel = 0
@@ -1917,7 +1917,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 		ValueFrame.Name = Komaru.RandomString();
 		ValueFrame.Parent = Slider
 		ValueFrame.AnchorPoint = Vector2.new(1, 0)
-		ValueFrame.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
+		ValueFrame.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
 		ValueFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		ValueFrame.BorderSizePixel = 0
 		ValueFrame.ClipsDescendants = true
@@ -2180,7 +2180,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		Option.Name = Komaru.RandomString();
 		Option.Parent = Handler
-		Option.BackgroundColor3 = Color3.fromRGB(39, 40, 49)
+		Option.BackgroundColor3 = Color3.fromRGB(39, 39, 49)
 		Option.BackgroundTransparency = 1.000
 		Option.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Option.BorderSizePixel = 0
@@ -2226,6 +2226,12 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		Window.SetRender(Signal:GetValue());
 		Signal:Connect(Window.SetRender);
+
+		Komaru:AddSignal(Window.Signal:Connect(LPH_NO_VIRTUALIZE(function(value)
+			if not value then
+				Window.Signal:SetValue(false);
+			end;
+		end)));
 
 		local bthg = Komaru:CreateInput(Option , LPH_NO_VIRTUALIZE(function()
 			if reciveSignal then
@@ -2416,7 +2422,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		Keybind.Name = Komaru.RandomString();
 		Keybind.Parent = Handler
-		Keybind.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
+		Keybind.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
 		Keybind.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Keybind.BorderSizePixel = 0
 		Keybind.ClipsDescendants = true
@@ -2570,7 +2576,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		TextInput.Name = Komaru.RandomString();
 		TextInput.Parent = Handler
-		TextInput.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
+		TextInput.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
 		TextInput.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		TextInput.BorderSizePixel = 0
 		TextInput.ClipsDescendants = true
@@ -2684,7 +2690,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 		Dropdown.Name = Komaru.RandomString();
 		Dropdown.Parent = Handler
-		Dropdown.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
+		Dropdown.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
 		Dropdown.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Dropdown.BorderSizePixel = 0
 		Dropdown.ClipsDescendants = true
@@ -2809,7 +2815,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 			DropdownHandler.Name = Komaru.RandomString();
 			DropdownHandler.Parent = Komaru.ScreenGui;
 			DropdownHandler.AnchorPoint = Vector2.new(0.5, 0)
-			DropdownHandler.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+			DropdownHandler.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 			DropdownHandler.BackgroundTransparency = 0.5
 			DropdownHandler.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			DropdownHandler.BorderSizePixel = 0
@@ -2967,7 +2973,7 @@ function Komaru:RegisiterHandler(Handler: Frame , Signal)
 
 				ItemFrame.Name = Komaru.RandomString();
 				ItemFrame.Parent = DropdownLib.RootItem
-				ItemFrame.BackgroundColor3 = Color3.fromRGB(29, 31, 38)
+				ItemFrame.BackgroundColor3 = Color3.fromRGB(29, 29, 38)
 				ItemFrame.BackgroundTransparency = 1.000
 				ItemFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 				ItemFrame.BorderSizePixel = 0
@@ -3245,7 +3251,7 @@ function Komaru:CreateToolTips(Container: Frame , Name: string , Content: string
 	local Shadow = Komaru:CreateShadow(Tooltips);
 
 	Tooltips.Name = Komaru.RandomString();
-	Tooltips.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+	Tooltips.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 	Tooltips.BackgroundTransparency = 0.075
 	Tooltips.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Tooltips.BorderSizePixel = 0
@@ -5006,7 +5012,7 @@ function Komaru:CreateWindow(Config)
 			SectionHandler.Name = Komaru.RandomString();
 			SectionHandler.Parent = SectionFrame
 			SectionHandler.AnchorPoint = Vector2.new(0.5, 0)
-			SectionHandler.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+			SectionHandler.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 			SectionHandler.BackgroundTransparency = 0.500
 			SectionHandler.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			SectionHandler.BorderSizePixel = 0
@@ -5201,7 +5207,7 @@ function Komaru:CreateWindow(Config)
 		ConfigMenu.Name = Komaru.RandomString();
 		ConfigMenu.Parent = Komaru.ScreenGui;
 		ConfigMenu.AnchorPoint = Vector2.new(0.5, 0)
-		ConfigMenu.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+		ConfigMenu.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 		ConfigMenu.BackgroundTransparency = 0.035
 		ConfigMenu.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		ConfigMenu.BorderSizePixel = 0
@@ -5291,7 +5297,7 @@ function Komaru:CreateWindow(Config)
 
 		TextInput.Name = Komaru.RandomString();
 		TextInput.Parent = BasedHandler
-		TextInput.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
+		TextInput.BackgroundColor3 = Color3.fromRGB(26, 26, 36)
 		TextInput.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		TextInput.BorderSizePixel = 0
 		TextInput.ClipsDescendants = true
@@ -5325,7 +5331,7 @@ function Komaru:CreateWindow(Config)
 
 		LoadConfig.Name = Komaru.RandomString();
 		LoadConfig.Parent = BasedHandler
-		LoadConfig.BackgroundColor3 = Color3.fromRGB(39, 40, 49)
+		LoadConfig.BackgroundColor3 = Color3.fromRGB(39, 39, 49)
 		LoadConfig.BackgroundTransparency = 1.000
 		LoadConfig.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		LoadConfig.BorderSizePixel = 0
@@ -5362,7 +5368,7 @@ function Komaru:CreateWindow(Config)
 		OpenButton.Name = Komaru.RandomString();
 		OpenButton.Parent = ConfigFrame
 		OpenButton.AnchorPoint = Vector2.new(0, 0.5)
-		OpenButton.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+		OpenButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 		OpenButton.BackgroundTransparency = 1.000
 		OpenButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		OpenButton.BorderSizePixel = 0
@@ -5511,7 +5517,7 @@ function Komaru:CreateWindow(Config)
 
 				DeleteConfig.Name = Komaru.RandomString();
 				DeleteConfig.Parent = BasedHandler
-				DeleteConfig.BackgroundColor3 = Color3.fromRGB(39, 40, 49)
+				DeleteConfig.BackgroundColor3 = Color3.fromRGB(39, 39, 49)
 				DeleteConfig.BackgroundTransparency = 1.000
 				DeleteConfig.BorderColor3 = Color3.fromRGB(0, 0, 0)
 				DeleteConfig.BorderSizePixel = 0
@@ -5541,7 +5547,7 @@ function Komaru:CreateWindow(Config)
 
 				LoadConfig.Name = Komaru.RandomString();
 				LoadConfig.Parent = BasedHandler
-				LoadConfig.BackgroundColor3 = Color3.fromRGB(39, 40, 49)
+				LoadConfig.BackgroundColor3 = Color3.fromRGB(39, 39, 49)
 				LoadConfig.BackgroundTransparency = 1.000
 				LoadConfig.BorderColor3 = Color3.fromRGB(0, 0, 0)
 				LoadConfig.BorderSizePixel = 0
@@ -6190,7 +6196,7 @@ function Komaru:CreateNotification()
 		NotifyFrame.Name = Komaru.RandomString();
 		NotifyFrame.Parent = ContainerFrame
 		NotifyFrame.AnchorPoint = Vector2.new(1, 0)
-		NotifyFrame.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+		NotifyFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 		NotifyFrame.BackgroundTransparency = 0.075
 		NotifyFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		NotifyFrame.BorderSizePixel = 0
@@ -6353,7 +6359,7 @@ function Komaru:CreateLogger()
 		LogFrame.Name = Komaru.RandomString();
 		LogFrame.Parent = Log
 		LogFrame.AnchorPoint = Vector2.new(0.5, 0)
-		LogFrame.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+		LogFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 		LogFrame.BackgroundTransparency =  1--0.075
 		LogFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		LogFrame.BorderSizePixel = 0
